@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from stats_util import bh, bootstrap_ci, cliffs_delta, magnitude, sign_test, spearman
 
 TIERS = ("top", "mid", "low")
-BINARY = ("hook_number", "hook_you", "hook_question", "hook_this", "hook_I")
+BINARY = ("hook_number", "hook_you", "hook_question", "hook_this", "hook_I", "title_number", "title_question", "title_caps_word", "title_emoji", "title_you", "title_this")
 
 def load_pick(path):
     """Keep the FIRST tier an id appears in (scout lists TOP first, so an overlapping video is a real TOP)."""
@@ -41,6 +41,11 @@ def feats(x, hookscore=None):
              but_pos=first_phrase_pos(w, D, "but"), silence_gaps=sum(1 for i in range(1, len(w)) if w[i][1] - w[i - 1][2] > 1),
              end_word_rate=len([t for t in w if t[1] > D * .9]) / max(D * .1, 1),
              start_word_rate=len([t for t in w if t[1] < D * .1]) / max(D * .1, 1))
+    tt = x.get("title", "") or ""
+    f.update(title_chars=len(tt), title_words=len(tt.split()), title_number=int(bool(re.search(r"\d", tt))),
+             title_question=int("?" in tt), title_caps_word=int(bool(re.search(r"\b[A-Z]{3,}\b", tt))),
+             title_hashtags=tt.count("#"), title_emoji=int(bool(re.search(r"[\U0001F300-\U0001FAFF\u2600-\u27BF]", tt))),
+             title_you=int(bool(re.search(r"\byou(r)?\b", tt, re.I))), title_this=int(bool(re.match(r"\s*(this|these|that|why|how)\b", tt, re.I))))
     if hookscore: f["hookscore"] = hookscore(x.get("hook", ""))[1]
     for k, v in (x.get("motion") or {}).items(): f[k] = v
     return f

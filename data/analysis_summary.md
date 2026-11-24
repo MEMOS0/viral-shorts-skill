@@ -27,6 +27,15 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | silence_gaps | 0 | 0 | 0 | 114/95 | +0.07 | [-0.07, +0.20] | no clear difference |
 | end_word_rate | 2.64 | 2.78 | 2.65 | 114/95 | +0.02 | [-0.14, +0.18] | no clear difference |
 | start_word_rate | 3.34 | 3.14 | 3.1 | 114/95 | +0.14 | [-0.02, +0.29] | no clear difference |
+| title_chars | 39 | 37 | 40 | 114/95 | -0.08 | [-0.25, +0.08] | no clear difference |
+| title_words | 7 | 6 | 7 | 114/95 | -0.14 | [-0.30, +0.02] | no clear difference |
+| title_number | 25 % | 18 % | 19 % | 114/95 | +0.06 | [-0.05, +0.16] | no clear difference |
+| title_question | 20 % | 17 % | 20 % | 114/95 | +0.00 | [-0.10, +0.11] | no clear difference |
+| title_caps_word | 18 % | 25 % | 20 % | 114/95 | -0.02 | [-0.13, +0.09] | no clear difference |
+| title_hashtags | 0 | 0 | 0 | 114/95 | +0.03 | [-0.06, +0.12] | no clear difference |
+| title_emoji | 7 % | 10 % | 8 % | 114/95 | -0.01 | [-0.09, +0.06] | no clear difference |
+| title_you | 13 % | 8 % | 9 % | 114/95 | +0.04 | [-0.05, +0.12] | no clear difference |
+| title_this | 20 % | 25 % | 23 % | 114/95 | -0.03 | [-0.15, +0.08] | no clear difference |
 | hookscore | 39.5 | 39 | 38 | 114/95 | +0.08 | [-0.08, +0.23] | no clear difference |
 | motion_mean | 7.52 | 7.46 | 6.55 | 114/95 | +0.11 | [-0.04, +0.27] | no clear difference |
 | motion_p90 | 16.31 | 15.03 | 14.34 | 114/95 | +0.10 | [-0.05, +0.25] | no clear difference |
@@ -48,13 +57,13 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | dur | 19 | +1.25 | 11 | 8 | 0.648 | 1.000 |
 | cuts_per_10s | 19 | -0.13 | 7 | 11 | 0.481 | 1.000 |
 | med_shot | 19 | +0.62 | 12 | 7 | 0.359 | 1.000 |
-| first_cut | 19 | -1.08 | 5 | 14 | 0.064 | 0.678 |
+| first_cut | 19 | -1.08 | 5 | 14 | 0.064 | 0.787 |
 | first_cut_censored | 19 | -0.98 | 7 | 12 | 0.359 | 1.000 |
 | first_word | 19 | +0.00 | 0 | 1 | 1.000 | 1.000 |
-| wpm | 19 | +3.50 | 13 | 6 | 0.167 | 0.891 |
-| lufs | 19 | +0.55 | 13 | 6 | 0.167 | 0.891 |
+| wpm | 19 | +3.50 | 13 | 6 | 0.167 | 0.979 |
+| lufs | 19 | +0.55 | 13 | 6 | 0.167 | 0.979 |
 | loopdiff | 19 | -9.50 | 9 | 10 | 1.000 | 1.000 |
-| hook_words | 19 | +1.00 | 11 | 3 | 0.057 | 0.678 |
+| hook_words | 19 | +1.00 | 11 | 3 | 0.057 | 0.787 |
 | hook_number | 19 | +0.00 | 7 | 7 | 1.000 | 1.000 |
 | hook_you | 19 | +0.00 | 8 | 9 | 1.000 | 1.000 |
 | hook_question | 19 | -0.03 | 6 | 10 | 0.454 | 1.000 |
@@ -63,14 +72,23 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | but_pos | 19 | -2.66 | 9 | 10 | 1.000 | 1.000 |
 | silence_gaps | 19 | +0.00 | 5 | 4 | 1.000 | 1.000 |
 | end_word_rate | 19 | +0.11 | 10 | 9 | 1.000 | 1.000 |
-| start_word_rate | 19 | +0.22 | 14 | 5 | 0.064 | 0.678 |
+| start_word_rate | 19 | +0.22 | 14 | 5 | 0.064 | 0.787 |
+| title_chars | 19 | -2.00 | 6 | 11 | 0.332 | 1.000 |
+| title_words | 19 | -0.50 | 4 | 12 | 0.077 | 0.787 |
+| title_number | 19 | +0.00 | 7 | 5 | 0.774 | 1.000 |
+| title_question | 19 | +0.00 | 6 | 7 | 1.000 | 1.000 |
+| title_caps_word | 19 | +0.00 | 3 | 6 | 0.508 | 1.000 |
+| title_hashtags | 19 | +0.00 | 1 | 1 | 1.000 | 1.000 |
+| title_emoji | 19 | +0.00 | 1 | 2 | 1.000 | 1.000 |
+| title_you | 19 | +0.00 | 7 | 5 | 0.774 | 1.000 |
+| title_this | 19 | -0.03 | 6 | 10 | 0.454 | 1.000 |
 | hookscore | 19 | +0.00 | 9 | 7 | 0.804 | 1.000 |
 | motion_mean | 19 | +0.27 | 10 | 9 | 1.000 | 1.000 |
 | motion_p90 | 19 | -0.96 | 9 | 10 | 1.000 | 1.000 |
 | static_share | 19 | +0.01 | 10 | 8 | 0.815 | 1.000 |
 | longest_static_s | 19 | +1.00 | 11 | 7 | 0.481 | 1.000 |
 | hard_cuts | 19 | +3.00 | 11 | 8 | 0.648 | 1.000 |
-| soft_cuts | 19 | +3.00 | 13 | 5 | 0.096 | 0.770 |
+| soft_cuts | 19 | +3.00 | 13 | 5 | 0.096 | 0.789 |
 | first3_changes | 19 | +0.00 | 9 | 6 | 0.607 | 1.000 |
 | first15_motion | 19 | +0.61 | 10 | 9 | 1.000 | 1.000 |
 | ff_brightness | 19 | +1.25 | 11 | 8 | 0.648 | 1.000 |
@@ -101,6 +119,14 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | silence_gaps | 18 | +0.01 | [-0.13, +0.16] |
 | end_word_rate | 19 | -0.04 | [-0.17, +0.09] |
 | start_word_rate | 19 | +0.20 | [+0.10, +0.30] |
+| title_chars | 19 | -0.00 | [-0.15, +0.14] |
+| title_words | 19 | -0.05 | [-0.19, +0.10] |
+| title_number | 13 | +0.08 | [-0.09, +0.25] |
+| title_question | 15 | +0.02 | [-0.17, +0.19] |
+| title_caps_word | 11 | -0.08 | [-0.22, +0.09] |
+| title_hashtags | 9 | +0.05 | [-0.15, +0.27] |
+| title_you | 12 | +0.05 | [-0.13, +0.23] |
+| title_this | 17 | -0.01 | [-0.15, +0.15] |
 | hookscore | 19 | +0.08 | [-0.03, +0.19] |
 | motion_mean | 19 | -0.02 | [-0.18, +0.14] |
 | motion_p90 | 19 | -0.03 | [-0.19, +0.14] |
@@ -137,6 +163,14 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | silence_gaps | +0.02 | -0.01 | no |
 | end_word_rate | +0.02 | -0.10 | no |
 | start_word_rate | +0.21 | +0.20 | yes |
+| title_chars | +0.02 | -0.03 | no |
+| title_words | -0.07 | -0.02 | yes |
+| title_number | +0.10 | +0.05 | yes |
+| title_question | +0.12 | -0.11 | no |
+| title_caps_word | -0.12 | -0.04 | yes |
+| title_hashtags | +0.13 | -0.01 | no |
+| title_you | +0.15 | -0.05 | no |
+| title_this | +0.03 | -0.06 | no |
 | hookscore | -0.00 | +0.18 | no |
 | motion_mean | +0.00 | -0.05 | no |
 | motion_p90 | -0.01 | -0.05 | yes |
@@ -196,12 +230,12 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 Measured on 302 Shorts (TOP 114, MID 93, LOW 95) from 19 channels; views re-fetched on 2026-11-24 for age normalisation (`video_meta.json`, 302/302). Thirty-odd metrics were tested, so about 1–2 "significant" results are expected by chance alone: a result counts only if its CI excludes 0 **and** it agrees across sections 1–3. **None survives the false-discovery-rate correction in section 2 (all BH q ≥ 0.68).**
 
 **Weak, consistent-direction signals [M] (hypotheses, not formulas):**
-- **Denser opening.** Words per second in the first 10 % correlate with views/day inside channels (ρ = +0.20, 95 % CI +0.10…+0.30); TOP higher in 14 of 19 channels (sign test p = 0.064). Get to the story immediately; don't spend the opening on atmosphere.
+- **Denser opening.** Words per second in the first 10 % correlate with views/day inside channels (ρ = +0.20, 95 % CI +0.10…+0.30); TOP higher in 14 of 19 channels (sign test p = 0.064); it **replicates in both split halves of the channels** (ρ +0.21 / +0.20, §3b), the only feature that does so clearly. Get to the story immediately; don't spend the opening on atmosphere.
 - **Slightly longer spoken hook** (words in the first 3 s): ρ = +0.15 (+0.03…+0.25); 11 vs 3 channels. Same mechanism as above: the opening carries information.
 - **Earlier first hard cut:** pooled TOP 4.3 s vs LOW 5.0 s (Cliff's d −0.17, CI −0.33…−0.01) but only when the 36 videos with no detectable cut are dropped; counting them as "no cut until the end" the CI includes 0, and inside channels p = 0.064. Treat "change the picture before ~4 s" as hygiene [E] supported by a weak trend.
 - **More visual change overall** (hard and soft cuts from `motion_features.py`, which also catches fades and continuous moves): pooled d ≈ +0.17…+0.19 (small), not significant inside channels.
 
-**Not supported [M]:** louder mixes (d = +0.04, CI −0.11…+0.19 — the v2 note "hits are mixed louder" came from a comparison that multiplied negative LUFS by 1.1 and from medians only; withdrawn), narration speed (~177–179 WPM), the first "but" position (~44 % in every tier), loop difference, silence gaps, first-frame brightness/contrast/colourfulness/edges, motion in the first 1.5 s, hook wording (number, "you", question, "this", "I"). `hookscore_story.py` does not separate tiers (TOP 39.5, MID 39, LOW 38; d = +0.08, CI −0.08…+0.23; ρ = +0.08, CI −0.03…+0.19): it is a draft linter, not a predictor.
+**Not supported [M]:** louder mixes (d = +0.04, CI −0.11…+0.19 — the v2 note "hits are mixed louder" came from a comparison that multiplied negative LUFS by 1.1 and from medians only; withdrawn), narration speed (~177–179 WPM), the first "but" position (~44 % in every tier), loop difference, silence gaps, first-frame brightness/contrast/colourfulness/edges, motion in the first 1.5 s, hook wording (number, "you", question, "this", "I"), title wording and length (characters, words, number, question, ALL-CAPS, emoji, "you", "this/why/how"). `hookscore_story.py` does not separate tiers (TOP 39.5, MID 39, LOW 38; d = +0.08, CI −0.08…+0.23; ρ = +0.08, CI −0.03…+0.19): it is a draft linter, not a predictor.
 
 **Length [M, descriptive]:** 45–60 s holds 50 % of TOP vs 36 % of LOW; 20–35 s is over-represented in LOW (14 vs 6); 35–45 s is only 15 % of the sample and shows no edge. Pooled TOP are slightly longer (d = +0.18) but not inside channels. There is no measured best length: let the story set it.
 
@@ -209,7 +243,7 @@ Measured on 302 Shorts (TOP 114, MID 93, LOW 95) from 19 channels; views re-fetc
 
 **Conclusion:** inside a channel, measurable editing rhythm explains little. What separates hits from misses is mostly **topic, angle and packaging** (title, first frame, the idea), which these features don't capture. That is why discovery (`11`) is gated and evidence-based, and why the critic judges the rendered video against the story, not against editing averages.
 
-**Limits:** observational data: correlation, not causation. 19 mostly large channels; small-channel outliers are still under-sampled. No retention data (YouTube does not expose it for other people's videos — we don't invent it). Whisper base.en (English only) and FFmpeg scene detection are imperfect. Story factors (topic, emotion, originality, payoff) are not machine-measured here; `tools/blind_pairs.py` creates a label-blind within-channel pair test for human/model raters, and no result from it is claimed yet. Independent validation: section 3 is repeated on a held-out split of channels by `aggregate.py --holdout` once a second sample exists; until then every [M] claim is in-sample.
+**Limits:** observational data: correlation, not causation. 19 mostly large channels; small-channel outliers are still under-sampled. No retention data (YouTube does not expose it for other people's videos — we don't invent it). Whisper base.en (English only) and FFmpeg scene detection are imperfect. Story factors (topic, emotion, originality, payoff) are not machine-measured here; `tools/blind_pairs.py` creates a label-blind within-channel pair test for human/model raters, and no result from it is claimed yet. Independent validation: §3b repeats §3 on two disjoint halves of the channels (`aggregate.py --holdout`); a claim whose sign flips between halves is noise. A truly independent sample (new channels, new period) is still needed; until then every [M] claim is in-sample.
 
 **Data hygiene changes in this version:** two videos that the old scout put in both TOP and MID (`v_GaWFQ0H7s` PlainlyDifficult, `00_dmzXpCco` NEOexplains) are kept as TOP and the scout now builds disjoint tiers; five rows of the wrong "Mustard" channel (a rap artist) are removed from `shorts_full_analysis_v2.json`; 22 v1 rows not in the v2 sample moved to `v1_rows_not_in_pick2.json`. Reproduce: `tools/scout.py` → `tools/analyze_shorts.py` → `tools/motion_features.py v data/pick2.json data/motion_features.json` → `tools/fetch_meta.py data/pick2.json data/video_meta.json` → `tools/aggregate.py data/pick2.json data/shorts_full_analysis_v2.json data --motion data/motion_features.json --meta data/video_meta.json`.
 

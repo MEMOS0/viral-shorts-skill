@@ -27,6 +27,7 @@ This skill is built on measured data (302 Shorts from 19 channels; each channel'
 | `references/09-research-factcheck.md` | sources, fact-check gate |
 | `references/10-qa-checklist.md` | production-quality rubric + technical and human-eye gates |
 | `references/12-critic-agent.md` | independent critic that watches the rendered video |
+| `references/16-packaging.md` | title, description/caption, hashtags, tags, cover, pinned comment; platform limits + `package_lint.py` |
 | `references/14-code-production.md` | every shot type as code, build.py contract, encode |
 | `data/analysis_summary.md` | the numbers, with effect sizes, CIs and what they do NOT show (§7) |
 
@@ -63,7 +64,7 @@ Every rule is **[M] measured** in `data/` (effect size + CI, within-channel), **
 7. **Pre-render gate**: `python tools/check_storyboard.py storyboard.json --words words.json --gate gate.json` → PASS; also writes `holds.json`. Producer scores with `10` (< 85 → fix).
 8. **Render** (`14`): preview first, then final.
 9. **Post-render**: `python tools/critic_pack.py out.mp4 critic/ --holds holds.json` (gate_pass must be true), then the independent critic (`12`) watches `proxy.mp4`: QA score and VIRAL estimate separately, SHIP/FIX/KILL. The producer's score never ships a video. Max two FIX rounds.
-10. **Package**: title, caption, hashtags, cover frame, pinned comment (`01`, `08`); deliver with `templates/short_plan.md` / `batch_plan.md`.
+10. **Package** (`16`): 5 titles, description/caption with sources and credits, hashtags (YT 3–5, IG ≤ 5), tags, cover frame, pinned comment in `package.json` per platform; `python tools/package_lint.py package.json` must PASS; deliver with `templates/short_plan.md` / `batch_plan.md`.
 11. **Learn**: after 7 days log metrics in `data/calibration.csv`; every 10 videos run `calibrate.py` and update weights that don't predict.
 
 ## When asked for N videos

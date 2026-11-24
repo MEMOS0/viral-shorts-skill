@@ -33,6 +33,7 @@ This skill is built on measured data (302 Shorts from 19 channels; each channel'
 | `references/09-research-factcheck.md` | sources, fact-check gate |
 | `references/10-qa-checklist.md` | production-quality rubric + technical and human-eye gates |
 | `references/12-critic-agent.md` | independent critic that watches the rendered video |
+| `references/16-packaging.md` | title, description/caption, hashtags, tags, cover, pinned comment; platform limits + `package_lint.py` |
 | `references/14-code-production.md` | every shot type as code, build.py contract, encode |
 | `data/analysis_summary.md` | the numbers, with effect sizes, CIs and what they do NOT show (§7) |
 
@@ -69,7 +70,7 @@ Every rule is **[M] measured** in `data/` (effect size + CI, within-channel), **
 7. **Pre-render gate**: `python tools/check_storyboard.py storyboard.json --words words.json --gate gate.json` → PASS; also writes `holds.json`. Producer scores with `10` (< 85 → fix).
 8. **Render** (`14`): preview first, then final.
 9. **Post-render**: `python tools/critic_pack.py out.mp4 critic/ --holds holds.json` (gate_pass must be true), then the independent critic (`12`) watches `proxy.mp4`: QA score and VIRAL estimate separately, SHIP/FIX/KILL. The producer's score never ships a video. Max two FIX rounds.
-10. **Package**: title, caption, hashtags, cover frame, pinned comment (`01`, `08`); deliver with `templates/short_plan.md` / `batch_plan.md`.
+10. **Package** (`16`): 5 titles, description/caption with sources and credits, hashtags (YT 3–5, IG ≤ 5), tags, cover frame, pinned comment in `package.json` per platform; `python tools/package_lint.py package.json` must PASS; deliver with `templates/short_plan.md` / `batch_plan.md`.
 11. **Learn**: after 7 days log metrics in `data/calibration.csv`; every 10 videos run `calibrate.py` and update weights that don't predict.
 
 ## When asked for N videos
@@ -1162,6 +1163,65 @@ Length follows the story: the v2 data do not show a best length after controllin
 ## 4. Emotion without manipulation
 Respect victims: no gore, no faces of the dead without archive context, no "you won't believe". The engineering lesson is the payoff; the tragedy is not entertainment.
 
+<!-- ===== references/16-packaging.md ===== -->
+
+# 16 — Packaging: title, description, tags, hashtags, cover, pinned comment
+
+Packaging decides whether the right people find and choose the video; it can't rescue a weak story. Write it **after** the critic SHIPs, from the final cut, and lint it: `python tools/package_lint.py package.json`.
+
+## 1. Platform facts (checked 2026-11; re-check yearly) [R]
+
+| Item | YouTube Shorts | Instagram Reels |
+|---|---|---|
+| Title | ≤ 100 characters, no `<` `>` (YouTube Help "Edit video settings") | no title field; the first caption line acts as the title |
+| Description / caption | ≤ 5,000 characters | ≤ 2,200 characters; **captions are what Search indexes** (keywords + hashtags in the caption, not in comments) |
+| Hashtags | up to 3 most engaging shown by the title; **> 60 hashtags = all ignored**, over-tagging can remove the video from search (YouTube Help "hashtags") | **max 5 per post/Reel** since Dec 2025 (Mosseri); generic tags like #reels #explore don't help and may hurt |
+| Tags | ≤ 500 characters in total; "useful if content is commonly misspelled, otherwise minimal role" (YouTube Help "tags") | — |
+| Links | URLs in Shorts descriptions and comments are **not clickable**; use the single "Related video" link to a long-form or series video | links in captions are not clickable; use the bio / link sticker |
+| Policy | spam & deceptive practices: no metadata that misleads about the content, no tag stuffing; thumbnail must not mislead (YouTube Help "Spam policy", "Thumbnails policy") | Recommendation guidelines: no engagement bait ("comment YES") |
+| Search signals | title, description, spoken words and on-screen text | caption, on-screen text, spoken words, username/bio |
+
+## 2. What our data say about titles [M]
+Across 302 Shorts (within channel, `data/analysis_summary.md`): title length (median ~39 characters, ~7 words), numbers, questions, ALL-CAPS words, emoji, "you", "this/why/how" openers **do not separate hits from misses** (all CIs include 0, none replicates in both split halves). There is no title formula. Titles work through the idea they name, so:
+
+## 3. Title rules [E unless tagged]
+1. **Name the strange concrete thing, not the category**: "One rod changed. 114 people died." beats "Engineering disaster explained".
+2. **Complement, don't repeat, the hook**: the title is read while the first line is heard; together they should open one gap. Never reveal the cause the video withholds.
+3. **Truthful**: everything the title promises happens in the video (policy [R] + trust). No "you won't believe", no fake urgency, no ALL-CAPS shouting (max one capitalised word for emphasis).
+4. **Searchable noun**: include the name people search (Hyatt Regency, Challenger, Tacoma Narrows) when the topic has demand evidence (Wikipedia pageviews/Trends from `11`).
+5. **Length**: front-load the meaning in the first ~40 characters (what shows on phones); hard limit 100.
+6. **Write 5, pick 2**: one for the upload, one for a later YouTube title test or an Instagram trial reel.
+7. Same language as the narration; no emoji in titles for documentary-style channels.
+
+## 4. Description (YouTube) / caption (Instagram)
+- Line 1: a second hook sentence with the searchable keywords, in plain words ("In 1981 a hotel walkway in Kansas City fell because one design detail was changed.").
+- Lines 2–3: one surprising fact the video didn't have room for, and the lesson in one line.
+- Sources: "Sources: NBS report NBSIR 82-2465 (1982); …" — short names, no URLs needed in Shorts (not clickable); archive credits as required by the licence ("Photo: Lee Lowery Jr., NBS, public domain").
+- Reconstruction disclosure: "3D reconstruction by FirstEngineer; not real footage." AI disclosure only if the platform's synthetic-media rule applies (this skill doesn't use AI imagery).
+- Product bridge: at most one neutral line, never a link pitch (`08`).
+- Hashtags last: YouTube 3–5 (topic, field, event; first three are the ones shown); Instagram ≤ 5, specific (#engineeringdisaster #structuralengineering #kansascity), never #reels #viral #fyp #explore.
+- No questions designed only to bait comments; a genuine question tied to the story is fine.
+
+## 5. Tags (YouTube)
+5–12 tags, ≤ 500 characters: the event name, common misspellings ("hyatt regancy"), the people/places, the field. They barely affect discovery [R]; don't spend time beyond that.
+
+## 6. Cover / thumbnail frame
+Shorts: choose the frame in the YouTube app; Reels: upload a cover and set grid crop (center 1:1 / 3:4). Pick the frame that shows the strange object or moment from the hook, with ≤ 4 words of large text inside the centre safe area, real archive or a labelled reconstruction; consistent type and colour across the channel. Never a frame that isn't in the video.
+
+## 7. Pinned comment
+One line that adds value (a source detail, a correction, "the second walkway is why the death toll was so high"), or the link to the long-form via the Related-video feature. Pin your own correction if a fact is challenged.
+
+## 8. Posting
+Upload time matters less than consistency; post when your own analytics show the audience is active, and keep the cadence the channel can sustain. Log title, description first line, hashtags and cover choice in `data/calibration.csv` so packaging can be compared later.
+
+## 9. Deliverable: `package.json`
+```json
+{"platform": "youtube", "title": "...", "alt_titles": ["...", "...", "...", "..."], "description": "...", "hashtags": ["#..."],
+ "tags": ["..."], "cover_time_s": 1.2, "cover_text": "ONE ROD", "pinned_comment": "...", "related_video": "https://youtube.com/watch?v=...",
+ "hook_line": "...", "withheld_cause": "two rods instead of one", "keywords": ["Hyatt Regency", "walkway collapse"]}
+```
+Make one per platform (`"platform": "instagram"` uses `caption` instead of `title`/`description`).
+
 <!-- ===== templates/batch_plan.md ===== -->
 
 # BATCH PLAN — <batch name> (<N> videos)
@@ -1444,6 +1504,15 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | silence_gaps | 0 | 0 | 0 | 114/95 | +0.07 | [-0.07, +0.20] | no clear difference |
 | end_word_rate | 2.64 | 2.78 | 2.65 | 114/95 | +0.02 | [-0.14, +0.18] | no clear difference |
 | start_word_rate | 3.34 | 3.14 | 3.1 | 114/95 | +0.14 | [-0.02, +0.29] | no clear difference |
+| title_chars | 39 | 37 | 40 | 114/95 | -0.08 | [-0.25, +0.08] | no clear difference |
+| title_words | 7 | 6 | 7 | 114/95 | -0.14 | [-0.30, +0.02] | no clear difference |
+| title_number | 25 % | 18 % | 19 % | 114/95 | +0.06 | [-0.05, +0.16] | no clear difference |
+| title_question | 20 % | 17 % | 20 % | 114/95 | +0.00 | [-0.10, +0.11] | no clear difference |
+| title_caps_word | 18 % | 25 % | 20 % | 114/95 | -0.02 | [-0.13, +0.09] | no clear difference |
+| title_hashtags | 0 | 0 | 0 | 114/95 | +0.03 | [-0.06, +0.12] | no clear difference |
+| title_emoji | 7 % | 10 % | 8 % | 114/95 | -0.01 | [-0.09, +0.06] | no clear difference |
+| title_you | 13 % | 8 % | 9 % | 114/95 | +0.04 | [-0.05, +0.12] | no clear difference |
+| title_this | 20 % | 25 % | 23 % | 114/95 | -0.03 | [-0.15, +0.08] | no clear difference |
 | hookscore | 39.5 | 39 | 38 | 114/95 | +0.08 | [-0.08, +0.23] | no clear difference |
 | motion_mean | 7.52 | 7.46 | 6.55 | 114/95 | +0.11 | [-0.04, +0.27] | no clear difference |
 | motion_p90 | 16.31 | 15.03 | 14.34 | 114/95 | +0.10 | [-0.05, +0.25] | no clear difference |
@@ -1465,13 +1534,13 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | dur | 19 | +1.25 | 11 | 8 | 0.648 | 1.000 |
 | cuts_per_10s | 19 | -0.13 | 7 | 11 | 0.481 | 1.000 |
 | med_shot | 19 | +0.62 | 12 | 7 | 0.359 | 1.000 |
-| first_cut | 19 | -1.08 | 5 | 14 | 0.064 | 0.678 |
+| first_cut | 19 | -1.08 | 5 | 14 | 0.064 | 0.787 |
 | first_cut_censored | 19 | -0.98 | 7 | 12 | 0.359 | 1.000 |
 | first_word | 19 | +0.00 | 0 | 1 | 1.000 | 1.000 |
-| wpm | 19 | +3.50 | 13 | 6 | 0.167 | 0.891 |
-| lufs | 19 | +0.55 | 13 | 6 | 0.167 | 0.891 |
+| wpm | 19 | +3.50 | 13 | 6 | 0.167 | 0.979 |
+| lufs | 19 | +0.55 | 13 | 6 | 0.167 | 0.979 |
 | loopdiff | 19 | -9.50 | 9 | 10 | 1.000 | 1.000 |
-| hook_words | 19 | +1.00 | 11 | 3 | 0.057 | 0.678 |
+| hook_words | 19 | +1.00 | 11 | 3 | 0.057 | 0.787 |
 | hook_number | 19 | +0.00 | 7 | 7 | 1.000 | 1.000 |
 | hook_you | 19 | +0.00 | 8 | 9 | 1.000 | 1.000 |
 | hook_question | 19 | -0.03 | 6 | 10 | 0.454 | 1.000 |
@@ -1480,14 +1549,23 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | but_pos | 19 | -2.66 | 9 | 10 | 1.000 | 1.000 |
 | silence_gaps | 19 | +0.00 | 5 | 4 | 1.000 | 1.000 |
 | end_word_rate | 19 | +0.11 | 10 | 9 | 1.000 | 1.000 |
-| start_word_rate | 19 | +0.22 | 14 | 5 | 0.064 | 0.678 |
+| start_word_rate | 19 | +0.22 | 14 | 5 | 0.064 | 0.787 |
+| title_chars | 19 | -2.00 | 6 | 11 | 0.332 | 1.000 |
+| title_words | 19 | -0.50 | 4 | 12 | 0.077 | 0.787 |
+| title_number | 19 | +0.00 | 7 | 5 | 0.774 | 1.000 |
+| title_question | 19 | +0.00 | 6 | 7 | 1.000 | 1.000 |
+| title_caps_word | 19 | +0.00 | 3 | 6 | 0.508 | 1.000 |
+| title_hashtags | 19 | +0.00 | 1 | 1 | 1.000 | 1.000 |
+| title_emoji | 19 | +0.00 | 1 | 2 | 1.000 | 1.000 |
+| title_you | 19 | +0.00 | 7 | 5 | 0.774 | 1.000 |
+| title_this | 19 | -0.03 | 6 | 10 | 0.454 | 1.000 |
 | hookscore | 19 | +0.00 | 9 | 7 | 0.804 | 1.000 |
 | motion_mean | 19 | +0.27 | 10 | 9 | 1.000 | 1.000 |
 | motion_p90 | 19 | -0.96 | 9 | 10 | 1.000 | 1.000 |
 | static_share | 19 | +0.01 | 10 | 8 | 0.815 | 1.000 |
 | longest_static_s | 19 | +1.00 | 11 | 7 | 0.481 | 1.000 |
 | hard_cuts | 19 | +3.00 | 11 | 8 | 0.648 | 1.000 |
-| soft_cuts | 19 | +3.00 | 13 | 5 | 0.096 | 0.770 |
+| soft_cuts | 19 | +3.00 | 13 | 5 | 0.096 | 0.789 |
 | first3_changes | 19 | +0.00 | 9 | 6 | 0.607 | 1.000 |
 | first15_motion | 19 | +0.61 | 10 | 9 | 1.000 | 1.000 |
 | ff_brightness | 19 | +1.25 | 11 | 8 | 0.648 | 1.000 |
@@ -1518,6 +1596,14 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | silence_gaps | 18 | +0.01 | [-0.13, +0.16] |
 | end_word_rate | 19 | -0.04 | [-0.17, +0.09] |
 | start_word_rate | 19 | +0.20 | [+0.10, +0.30] |
+| title_chars | 19 | -0.00 | [-0.15, +0.14] |
+| title_words | 19 | -0.05 | [-0.19, +0.10] |
+| title_number | 13 | +0.08 | [-0.09, +0.25] |
+| title_question | 15 | +0.02 | [-0.17, +0.19] |
+| title_caps_word | 11 | -0.08 | [-0.22, +0.09] |
+| title_hashtags | 9 | +0.05 | [-0.15, +0.27] |
+| title_you | 12 | +0.05 | [-0.13, +0.23] |
+| title_this | 17 | -0.01 | [-0.15, +0.15] |
 | hookscore | 19 | +0.08 | [-0.03, +0.19] |
 | motion_mean | 19 | -0.02 | [-0.18, +0.14] |
 | motion_p90 | 19 | -0.03 | [-0.19, +0.14] |
@@ -1554,6 +1640,14 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 | silence_gaps | +0.02 | -0.01 | no |
 | end_word_rate | +0.02 | -0.10 | no |
 | start_word_rate | +0.21 | +0.20 | yes |
+| title_chars | +0.02 | -0.03 | no |
+| title_words | -0.07 | -0.02 | yes |
+| title_number | +0.10 | +0.05 | yes |
+| title_question | +0.12 | -0.11 | no |
+| title_caps_word | -0.12 | -0.04 | yes |
+| title_hashtags | +0.13 | -0.01 | no |
+| title_you | +0.15 | -0.05 | no |
+| title_this | +0.03 | -0.06 | no |
 | hookscore | -0.00 | +0.18 | no |
 | motion_mean | +0.00 | -0.05 | no |
 | motion_p90 | -0.01 | -0.05 | yes |
@@ -1613,12 +1707,12 @@ Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, <
 Measured on 302 Shorts (TOP 114, MID 93, LOW 95) from 19 channels; views re-fetched on 2026-11-24 for age normalisation (`video_meta.json`, 302/302). Thirty-odd metrics were tested, so about 1–2 "significant" results are expected by chance alone: a result counts only if its CI excludes 0 **and** it agrees across sections 1–3. **None survives the false-discovery-rate correction in section 2 (all BH q ≥ 0.68).**
 
 **Weak, consistent-direction signals [M] (hypotheses, not formulas):**
-- **Denser opening.** Words per second in the first 10 % correlate with views/day inside channels (ρ = +0.20, 95 % CI +0.10…+0.30); TOP higher in 14 of 19 channels (sign test p = 0.064). Get to the story immediately; don't spend the opening on atmosphere.
+- **Denser opening.** Words per second in the first 10 % correlate with views/day inside channels (ρ = +0.20, 95 % CI +0.10…+0.30); TOP higher in 14 of 19 channels (sign test p = 0.064); it **replicates in both split halves of the channels** (ρ +0.21 / +0.20, §3b), the only feature that does so clearly. Get to the story immediately; don't spend the opening on atmosphere.
 - **Slightly longer spoken hook** (words in the first 3 s): ρ = +0.15 (+0.03…+0.25); 11 vs 3 channels. Same mechanism as above: the opening carries information.
 - **Earlier first hard cut:** pooled TOP 4.3 s vs LOW 5.0 s (Cliff's d −0.17, CI −0.33…−0.01) but only when the 36 videos with no detectable cut are dropped; counting them as "no cut until the end" the CI includes 0, and inside channels p = 0.064. Treat "change the picture before ~4 s" as hygiene [E] supported by a weak trend.
 - **More visual change overall** (hard and soft cuts from `motion_features.py`, which also catches fades and continuous moves): pooled d ≈ +0.17…+0.19 (small), not significant inside channels.
 
-**Not supported [M]:** louder mixes (d = +0.04, CI −0.11…+0.19 — the v2 note "hits are mixed louder" came from a comparison that multiplied negative LUFS by 1.1 and from medians only; withdrawn), narration speed (~177–179 WPM), the first "but" position (~44 % in every tier), loop difference, silence gaps, first-frame brightness/contrast/colourfulness/edges, motion in the first 1.5 s, hook wording (number, "you", question, "this", "I"). `hookscore_story.py` does not separate tiers (TOP 39.5, MID 39, LOW 38; d = +0.08, CI −0.08…+0.23; ρ = +0.08, CI −0.03…+0.19): it is a draft linter, not a predictor.
+**Not supported [M]:** louder mixes (d = +0.04, CI −0.11…+0.19 — the v2 note "hits are mixed louder" came from a comparison that multiplied negative LUFS by 1.1 and from medians only; withdrawn), narration speed (~177–179 WPM), the first "but" position (~44 % in every tier), loop difference, silence gaps, first-frame brightness/contrast/colourfulness/edges, motion in the first 1.5 s, hook wording (number, "you", question, "this", "I"), title wording and length (characters, words, number, question, ALL-CAPS, emoji, "you", "this/why/how"). `hookscore_story.py` does not separate tiers (TOP 39.5, MID 39, LOW 38; d = +0.08, CI −0.08…+0.23; ρ = +0.08, CI −0.03…+0.19): it is a draft linter, not a predictor.
 
 **Length [M, descriptive]:** 45–60 s holds 50 % of TOP vs 36 % of LOW; 20–35 s is over-represented in LOW (14 vs 6); 35–45 s is only 15 % of the sample and shows no edge. Pooled TOP are slightly longer (d = +0.18) but not inside channels. There is no measured best length: let the story set it.
 
@@ -1626,6 +1720,6 @@ Measured on 302 Shorts (TOP 114, MID 93, LOW 95) from 19 channels; views re-fetc
 
 **Conclusion:** inside a channel, measurable editing rhythm explains little. What separates hits from misses is mostly **topic, angle and packaging** (title, first frame, the idea), which these features don't capture. That is why discovery (`11`) is gated and evidence-based, and why the critic judges the rendered video against the story, not against editing averages.
 
-**Limits:** observational data: correlation, not causation. 19 mostly large channels; small-channel outliers are still under-sampled. No retention data (YouTube does not expose it for other people's videos — we don't invent it). Whisper base.en (English only) and FFmpeg scene detection are imperfect. Story factors (topic, emotion, originality, payoff) are not machine-measured here; `tools/blind_pairs.py` creates a label-blind within-channel pair test for human/model raters, and no result from it is claimed yet. Independent validation: section 3 is repeated on a held-out split of channels by `aggregate.py --holdout` once a second sample exists; until then every [M] claim is in-sample.
+**Limits:** observational data: correlation, not causation. 19 mostly large channels; small-channel outliers are still under-sampled. No retention data (YouTube does not expose it for other people's videos — we don't invent it). Whisper base.en (English only) and FFmpeg scene detection are imperfect. Story factors (topic, emotion, originality, payoff) are not machine-measured here; `tools/blind_pairs.py` creates a label-blind within-channel pair test for human/model raters, and no result from it is claimed yet. Independent validation: §3b repeats §3 on two disjoint halves of the channels (`aggregate.py --holdout`); a claim whose sign flips between halves is noise. A truly independent sample (new channels, new period) is still needed; until then every [M] claim is in-sample.
 
 **Data hygiene changes in this version:** two videos that the old scout put in both TOP and MID (`v_GaWFQ0H7s` PlainlyDifficult, `00_dmzXpCco` NEOexplains) are kept as TOP and the scout now builds disjoint tiers; five rows of the wrong "Mustard" channel (a rap artist) are removed from `shorts_full_analysis_v2.json`; 22 v1 rows not in the v2 sample moved to `v1_rows_not_in_pick2.json`. Reproduce: `tools/scout.py` → `tools/analyze_shorts.py` → `tools/motion_features.py v data/pick2.json data/motion_features.json` → `tools/fetch_meta.py data/pick2.json data/video_meta.json` → `tools/aggregate.py data/pick2.json data/shorts_full_analysis_v2.json data --motion data/motion_features.json --meta data/video_meta.json`.
