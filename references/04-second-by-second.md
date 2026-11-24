@@ -1,6 +1,6 @@
 # 04 — Second-by-second blueprint
 
-Plan every Short on a time grid before writing visuals. Times below are for a **35–45 s** story Short. This length is an *editorial default* for a new channel (short enough to finish, long enough for two value flips), not a measured optimum — in the v2 data, 45–60 s is the most common band among hits, 20–35 s is over-represented among misses, and 35–45 s shows no edge (`data/analysis_summary.md` sections 3 and 5). Measured hygiene: first cut before ~4 s. Scale proportionally for 25 s or 60 s.
+Plan every Short on a time grid before writing visuals. Times below are for a **35–45 s** story Short. This length is an *editorial default* for a new channel (short enough to finish, long enough for two value flips), not a measured optimum — in the v2 data, 45–60 s is the most common band among hits, 20–35 s is over-represented among misses, and 35–45 s shows no edge (`data/analysis_summary.md` §4 and §7). Hygiene [E, weak M trend]: first picture change before ~4 s; the opening 10 % is information-dense (the only within-channel correlate with views/day, ρ ≈ +0.2). Scale proportionally for 25 s or 60 s.
 
 ## Master grid (40 s example)
 
@@ -12,7 +12,7 @@ Plan every Short on a time grid before writing visuals. Times below are for a **
 | 5–12 | 12–30 | **Context in motion** | who / where / when, told as action, not exposition | 3–4 shots: archive, map, person | ambience establishes place | L2 opens ("They had checked everything.") |
 | 12–20 | 30–50 | **Escalation** | stakes rise each sentence; concrete numbers | diagram / mechanism / counter | tension builds, rhythmic hits | L3 opens ("Then it got worse.") |
 | 20–23 | 50–58 | **Mini-payoff** | answer L2 partially, reward the viewer | evidence close-up, highlighted line | hit + short riser | L2 closes, L3 still open |
-| 23–25 | 58–63 | **Turn** (second value flip; the first "but" already came at ~40 %, measured) | "You see, …" / "But here's the thing:" | black beat or freeze ≤ 1.5 s, then a new look | music drops out → silence → heavier cue | L4 opens |
+| 23–25 | 58–63 | **Turn** [E] (second value flip; the first "but" sits at ~44 % in TOP, MID and LOW alike, so position is not an edge) | "You see, …" / "But here's the thing:" | black beat or freeze ≤ 1.5 s, then a new look | music drops out → silence → heavier cue | L4 opens |
 | 25–34 | 63–85 | **Reveal / mechanism** | the real cause, in plain words + 1 number | cutaway / reconstruction / exploded view | sync effects on each part | L3 closes |
 | 34–38 | 85–95 | **Consequence / scale** | cost, lives, what changed | scale reveal (pull-back) or the aftermath photo | biggest hit of the video | — |
 | 38–40 | 95–100 | **Payoff line** | twist or punch line, ≤ 10 words, ends on the strongest word | final image that can loop into frame 0 | tail ≤ 1 s, blends into the first sound | L1 closes / L4 closes |

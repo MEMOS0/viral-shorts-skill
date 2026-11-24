@@ -2,7 +2,7 @@
 
 ## Format
 
-- 80–120 spoken words for 35–45 s (150–170 wpm). Count before recording.
+- Words = target seconds × ~2.9 (measured ~175 WPM in every tier). Length follows the story (`15-general-audience.md` §3); count before recording.
 - Sentences 4–12 words, active voice, past tense for the story, present tense for the lesson.
 - Plain spoken English (or the target language); a 12-year-old must understand every sentence on first hearing.
 - Numbers: one per sentence max, always with unit. Prefer the human-scale version ("as tall as a 10-storey building").
@@ -11,7 +11,7 @@
 
 1. **Payoff line first.** Write the last sentence before anything else. If it isn't great, pick another story.
 2. **Hook line.** The strangest concrete moment, in medias res. It must make the payoff necessary.
-3. **Turn line.** The "You see," sentence that re-frames everything.
+3. **Turn line** [E]. The sentence that re-frames everything ("You see, …" is one form; vary it). Its position is editorial: measured "but" timing does not differ between hits and misses.
 4. Fill escalation beats in between, each one flipping a value.
 5. Cut 20 %. Then read aloud with a timer.
 

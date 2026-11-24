@@ -55,7 +55,7 @@ Shorts are not mini-documentaries. They are a single turn of a story.
 
 - **In medias res**: open at the strangest moment, not the beginning (Zack D. Films pattern: "She woke up and found a bullet under her pillow").
 - **Value change (McKee)**: each beat must flip a value — safe→danger, known→unknown, success→failure. A beat that changes nothing is cut.
-- **The "You see," turn**: around 55–70 % of runtime, a backstory reveal re-frames everything shown so far ("You see, his ship had been torpedoed…"). It is the second hook.
+- **The "You see," turn** [E]: around 55–70 % of runtime, a backstory reveal re-frames everything shown so far ("You see, his ship had been torpedoed…"). It is the second hook.
 - **Payoff at the end, not before**: the final line delivers the reveal or twist and the video ends within ~0.5–1.0 s of the payoff word. No outro, no "thanks for watching".
 - **Peak-end rule (Kahneman)**: viewers judge the whole video by its peak and its final second. Put the best visual at the peak and the best line at the end.
 

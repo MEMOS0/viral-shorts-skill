@@ -1,54 +1,162 @@
-"""Aggregate analyze_shorts.py output into data/analysis_summary.md.
-Compares TOP vs MID vs LOW tiers *within each channel* (controls for channel size) to avoid survivorship bias.
-usage: python aggregate.py pick2.json full.json outdir
+"""Aggregate analyze_shorts.py output into data/analysis_summary.md and data/hooks_library.md.
+
+Compares TOP vs MID vs LOW *within each channel* (controls for channel size and audience) and reports
+effect sizes with bootstrap confidence intervals, exact sign tests with a false-discovery-rate
+correction, and within-channel rank correlations with views (or views/day when --meta is given).
+
+usage: python aggregate.py pick.json full.json outdir [--motion motion.json] [--meta meta.json]
 """
-import json,re,sys,statistics as S,collections as C
-pick={p["id"]:p for p in json.load(open(sys.argv[1]))};out=sys.argv[3]
-d=[]
-for x in json.load(open(sys.argv[2])):
-    if x["id"] in pick and x.get("dur"): x.update(pick[x["id"]]); d.append(x)
-med=lambda a:round(S.median(a),2) if a else None
-def feats(x):
-    D=x["dur"];w=x["words"];h=x.get("hook","").lower()
-    late=[t for t in w if t[1]>D*.25]
-    def first(m):
-        for i,t in enumerate(w):
-            if t[1]>D*.25 and " ".join(y[0].lower().strip(".,!?") for y in w[i:i+len(m.split())])==m: return 100*t[1]/D
-    return dict(dur=D,cuts_per_10s=10*x["ncuts"]/D,med_shot=x["med_shot"],first_cut=x["first_cut"],first_word=x["first_word"],wpm=x["wpm"],lufs=x["lufs"],
-        loopdiff=x["loopdiff"],hook_words=len(h.split()),hook_number=int(bool(re.search(r"\d|\b(one|two|three|four|five|ten|hundred|thousand|million|billion)\b",h))),
-        hook_you=int(bool(re.search(r"\byou\b|\byour\b",h))),hook_question=int("?" in h or bool(re.match(r"\s*(what|why|how|did|have|can|would|is|do)\b",h))),
-        hook_this=int(bool(re.match(r"\s*(this|these|that)\b",h))),hook_I=int(bool(re.search(r"\b(i|i'm|my|we)\b",h))),
-        but_pos=first("but"),silence_gaps=sum(1 for i in range(1,len(w)) if w[i][1]-w[i-1][2]>1),
-        end_word_rate=len([t for t in w if t[1]>D*.9])/max(D*.1,1),start_word_rate=len([t for t in w if t[1]<D*.1])/max(D*.1,1))
-F=[(x,feats(x)) for x in d];keys=list(F[0][1])
-L=[f"# Measured analysis — {len(d)} Shorts, {len({x['ch'] for x in d})} channels, tiered within channel\n",
-"Sample: for each channel, from its latest ~150 Shorts (newest 10 dropped because their views are not settled), the 6 most-viewed (TOP), 5 around the median (MID) and 5 least-viewed (LOW). Comparing tiers *inside the same channel* controls for channel size and audience; it shows what separates a channel's hits from its misses, not what makes a channel big.\n",
-"## 1. Tier comparison (median of each metric)\n","| Metric | TOP | MID | LOW | TOP vs LOW |","|---|---|---|---|---|"]
-for k in keys:
-    v={t:[f[k] for x,f in F if x["tier"]==t and f[k] is not None] for t in("top","mid","low")}
-    if k.startswith("hook_") and k!="hook_words": m={t:round(100*S.mean(v[t]),0) if v[t] else None for t in v};fmt=lambda a:f"{a:.0f} %"
-    else: m={t:med(v[t]) for t in v};fmt=lambda a:f"{a}"
-    diff="" if None in(m["top"],m["low"]) else ("higher" if m["top"]>m["low"]*1.1+0.001 else "lower" if m["top"]<m["low"]*0.9-0.001 else "≈ same")
-    L.append(f"| {k} | {fmt(m['top'])} | {fmt(m['mid'])} | {fmt(m['low'])} | {diff} |")
-L+=["\n## 2. Within-channel paired difference (TOP median − LOW median per channel; share of channels where TOP > LOW)\n","| Metric | Channels | Median diff | TOP > LOW in |","|---|---|---|---|"]
-g=C.defaultdict(lambda:C.defaultdict(list))
-for x,f in F: g[x["ch"]][x["tier"]].append(f)
-for k in keys:
-    ds=[]
-    for ch,t in g.items():
-        a=[f[k] for f in t["top"] if f[k] is not None];b=[f[k] for f in t["low"] if f[k] is not None]
-        if a and b: ds.append(S.median(a)-S.median(b))
-    if ds: L.append(f"| {k} | {len(ds)} | {round(S.median(ds),2)} | {sum(x>0 for x in ds)}/{len(ds)} |")
-L+=["\n## 3. Duration distribution (all tiers)\n","| Duration | TOP | MID | LOW |","|---|---|---|---|"]
-for a,b in[(0,20),(20,35),(35,45),(45,60),(60,90),(90,181)]:
-    L.append(f"| {a}–{b} s | "+" | ".join(str(sum(1 for x,f in F if x['tier']==t and a<=f['dur']<b)) for t in("top","mid","low"))+" |")
-L+=["\n## 4. Per channel\n","| Channel | Shorts listed | Channel median views | n analysed | TOP med views | LOW med views |","|---|---|---|---|---|---|"]
-for ch,t in sorted(g.items()):
-    xs=[x for x in d if x["ch"]==ch]
-    L.append(f"| {ch} | {xs[0]['ch_n']} | {int(xs[0]['ch_median']):,} | {len(xs)} | {int(med([x['views'] for x in xs if x['tier']=='top']) or 0):,} | {int(med([x['views'] for x in xs if x['tier']=='low']) or 0):,} |")
-open(f"{out}/analysis_summary.md","w",encoding="utf-8").write("\n".join(L))
-H=["# Hook library — first 3 s of every analysed Short\n","| Tier | Channel | Views | Title | First word s | First cut s | Dur s | Spoken hook (0–3 s) |","|---|---|---|---|---|---|---|---|"]
-for x in sorted(d,key=lambda x:(x["ch"],-x["views"])):
-    H.append(f"| {x['tier']} | {x['ch']} | {x['views']:,} | {x['title'][:60].replace('|','/')} | {x['first_word']} | {x['first_cut']} | {x['dur']} | {x['hook'].replace('|','/')} |")
-open(f"{out}/hooks_library.md","w",encoding="utf-8").write("\n".join(H))
-print("\n".join(L))
+import argparse, collections as C, datetime as dt, json, math, os, re, statistics as S, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from stats_util import bh, bootstrap_ci, cliffs_delta, magnitude, sign_test, spearman
+
+TIERS = ("top", "mid", "low")
+BINARY = ("hook_number", "hook_you", "hook_question", "hook_this", "hook_I")
+
+def load_pick(path):
+    """Keep the FIRST tier an id appears in (scout lists TOP first, so an overlapping video is a real TOP)."""
+    pick, conflicts = {}, []
+    for p in json.load(open(path, encoding="utf-8")):
+        if p["id"] in pick:
+            conflicts.append((p["id"], pick[p["id"]]["tier"], p["tier"])); continue
+        pick[p["id"]] = p
+    return pick, conflicts
+
+def first_phrase_pos(w, D, m):
+    n = len(m.split())
+    for i, t in enumerate(w):
+        if t[1] > D * .25 and " ".join(y[0].lower().strip(".,!?") for y in w[i:i + n]) == m:
+            return 100 * t[1] / D
+    return None
+
+def feats(x, hookscore=None):
+    D = x["dur"]; w = x["words"]; h = x.get("hook", "").lower()
+    f = dict(dur=D, cuts_per_10s=10 * x["ncuts"] / D, med_shot=x["med_shot"], first_cut=x["first_cut"],
+             first_cut_censored=x["first_cut"] if x["first_cut"] is not None else D, first_word=x["first_word"],
+             wpm=x["wpm"], lufs=x["lufs"], loopdiff=x["loopdiff"], hook_words=len(h.split()),
+             hook_number=int(bool(re.search(r"\d|\b(one|two|three|four|five|ten|hundred|thousand|million|billion)\b", h))),
+             hook_you=int(bool(re.search(r"\byou\b|\byour\b", h))),
+             hook_question=int("?" in h or bool(re.match(r"\s*(what|why|how|did|have|can|would|is|do)\b", h))),
+             hook_this=int(bool(re.match(r"\s*(this|these|that)\b", h))), hook_I=int(bool(re.search(r"\b(i|i'm|my|we)\b", h))),
+             but_pos=first_phrase_pos(w, D, "but"), silence_gaps=sum(1 for i in range(1, len(w)) if w[i][1] - w[i - 1][2] > 1),
+             end_word_rate=len([t for t in w if t[1] > D * .9]) / max(D * .1, 1),
+             start_word_rate=len([t for t in w if t[1] < D * .1]) / max(D * .1, 1))
+    if hookscore: f["hookscore"] = hookscore(x.get("hook", ""))[1]
+    for k, v in (x.get("motion") or {}).items(): f[k] = v
+    return f
+
+def age_days(m):
+    try:
+        u = dt.datetime.strptime(m["upload_date"], "%Y%m%d").date(); fe = dt.date.fromisoformat(m["fetched"])
+        return max(1, (fe - u).days)
+    except Exception:
+        return None
+
+def stat(v, k): return (S.mean(v) if k in BINARY else S.median(v)) if v else None
+def fmt(v, k): return "" if v is None else (f"{100 * v:.0f} %" if k in BINARY else f"{v:.2f}".rstrip("0").rstrip("."))
+def fci(ci): return "" if ci[0] is None else f"[{ci[0]:+.2f}, {ci[1]:+.2f}]"
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("pick"); ap.add_argument("full"); ap.add_argument("outdir")
+    ap.add_argument("--motion"); ap.add_argument("--meta"); ap.add_argument("--holdout", action="store_true")
+    a = ap.parse_args()
+    pick, conflicts = load_pick(a.pick)
+    motion = json.load(open(a.motion, encoding="utf-8")) if a.motion else {}
+    meta = json.load(open(a.meta, encoding="utf-8")) if a.meta else {}
+    try:
+        from hookscore_story import score as hookscore
+    except Exception:
+        hookscore = None
+    d = []
+    for x in json.load(open(a.full, encoding="utf-8")):
+        if x["id"] in pick and x.get("dur"):
+            x = dict(x); x.update(pick[x["id"]]); x["motion"] = motion.get(x["id"])
+            m = meta.get(x["id"]) or {}
+            ad = age_days(m) if m and "error" not in m else None
+            x["vpd"] = (m["views_now"] / ad) if ad and m.get("views_now") else None
+            d.append(x)
+    F = [(x, feats(x, hookscore)) for x in d]
+    keys = list(dict.fromkeys(k for _, f in F for k in f))
+    nt = C.Counter(x["tier"] for x in d)
+    L = [f"# Measured analysis — {len(d)} Shorts, {len({x['ch'] for x in d})} channels, tiered within channel\n",
+         f"Generated by `tools/aggregate.py`. Tiers: TOP {nt['top']}, MID {nt['mid']}, LOW {nt['low']}."
+         + (f" {len(conflicts)} id(s) were listed in two tiers by the old scout and kept in their first tier: {conflicts}." if conflicts else "") + "\n",
+         "Effect size = Cliff's delta TOP vs LOW (+ = TOP higher; |d| < 0.15 negligible, < 0.33 small, < 0.47 medium) with a 95 % bootstrap CI. "
+         "A difference is called only when the CI excludes 0. Binary hook features are shares (means), never medians.\n",
+         "## 1. Pooled tier comparison\n", "| Metric | TOP | MID | LOW | n TOP/LOW | Cliff's d | 95 % CI | Verdict |", "|---|---|---|---|---|---|---|---|"]
+    for k in keys:
+        v = {t: [f[k] for x, f in F if x["tier"] == t and f.get(k) is not None] for t in TIERS}
+        dl = cliffs_delta(v["top"], v["low"]); ci = bootstrap_ci(cliffs_delta, [v["top"], v["low"]]) if dl is not None else (None, None)
+        sig = ci[0] is not None and (ci[0] > 0 or ci[1] < 0)
+        verdict = (("TOP higher" if dl > 0 else "TOP lower") + f" ({magnitude(dl)})") if sig else "no clear difference"
+        L.append(f"| {k} | {fmt(stat(v['top'], k), k)} | {fmt(stat(v['mid'], k), k)} | {fmt(stat(v['low'], k), k)} | {len(v['top'])}/{len(v['low'])} | "
+                 f"{'' if dl is None else f'{dl:+.2f}'} | {fci(ci)} | {verdict} |")
+    g = C.defaultdict(lambda: C.defaultdict(list)); gx = C.defaultdict(list)
+    for x, f in F: g[x["ch"]][x["tier"]].append(f); gx[x["ch"]].append((x, f))
+    L += ["\n## 2. Within-channel paired difference (TOP − LOW per channel; median for continuous, share for binary)\n",
+          "| Metric | Channels | Median diff | TOP > LOW | TOP < LOW | sign-test p | BH q |", "|---|---|---|---|---|---|---|"]
+    rows = []
+    for k in keys:
+        ds = []
+        for ch, t in g.items():
+            A = [f[k] for f in t["top"] if f.get(k) is not None]; B = [f[k] for f in t["low"] if f.get(k) is not None]
+            if A and B: ds.append(stat(A, k) - stat(B, k))
+        if ds: rows.append((k, ds, sign_test(ds)))
+    q = bh([r[2] for r in rows])
+    for (k, ds, p), qq in zip(rows, q):
+        L.append(f"| {k} | {len(ds)} | {S.median(ds):+.2f} | {sum(x > 0 for x in ds)} | {sum(x < 0 for x in ds)} | {p:.3f} | {qq:.3f} |")
+    out_label = "log views/day" if meta else "log views"
+    L += [f"\n## 3. Within-channel rank correlation with {out_label} (all tiers; mean Spearman rho across channels, 95 % bootstrap CI over channels)\n",
+          "| Metric | Channels | mean rho | 95 % CI |", "|---|---|---|---|"]
+    for k in keys:
+        rh = []
+        for ch, xs in gx.items():
+            y = [math.log(x["vpd"]) if meta and x.get("vpd") else (math.log(x["views"]) if not meta else None) for x, _ in xs]
+            r = spearman([f.get(k) for _, f in xs], y)
+            if r is not None: rh.append(r)
+        if len(rh) >= 5:
+            L.append(f"| {k} | {len(rh)} | {S.mean(rh):+.2f} | {fci(bootstrap_ci(lambda z: S.mean(z), [rh]))} |")
+    if a.holdout:
+        chs = sorted(gx); halves = (chs[0::2], chs[1::2])
+        L += ["\n## 3b. Split-half replication (channels alternately assigned; a real effect should have the same sign in both halves)\n",
+              "| Metric | half A rho | half B rho | same sign |", "|---|---|---|---|"]
+        for k in keys:
+            hr = []
+            for half in halves:
+                rh = []
+                for ch in half:
+                    y = [math.log(x["vpd"]) if meta and x.get("vpd") else math.log(x["views"]) for x, _ in gx[ch]]
+                    r = spearman([f.get(k) for _, f in gx[ch]], y)
+                    if r is not None: rh.append(r)
+                hr.append(S.mean(rh) if len(rh) >= 3 else None)
+            if None not in hr: L.append(f"| {k} | {hr[0]:+.2f} | {hr[1]:+.2f} | {'yes' if hr[0] * hr[1] > 0 else 'no'} |")
+    L += ["\n## 4. Duration distribution\n", "| Duration | TOP | MID | LOW |", "|---|---|---|---|"]
+    for lo_, hi in [(0, 20), (20, 35), (35, 45), (45, 60), (60, 90), (90, 181)]:
+        L.append(f"| {lo_}–{hi} s | " + " | ".join(str(sum(1 for x, f in F if x['tier'] == t and lo_ <= f['dur'] < hi)) for t in TIERS) + " |")
+    L += ["\n## 5. Robustness\n"]
+    nocut = {t: sum(1 for x, f in F if x["tier"] == t and f["first_cut"] is None) for t in TIERS}
+    L.append(f"- Videos with no FFmpeg scene cut (excluded from `first_cut`, kept in `first_cut_censored` as duration): TOP {nocut['top']}, MID {nocut['mid']}, LOW {nocut['low']}.")
+    if meta:
+        stay = tot = 0
+        for ch, xs in gx.items():
+            v = [x for x, _ in xs if x.get("vpd")]
+            if len(v) < 10: continue
+            byv = {x["id"] for x in sorted(v, key=lambda x: -x["vpd"])[:6]}
+            tops = [x for x in v if x["tier"] == "top"]; stay += sum(x["id"] in byv for x in tops); tot += len(tops)
+        if tot: L.append(f"- Age normalisation: {stay}/{tot} TOP videos are still in their channel's top 6 when ranked by views/day.")
+    L += ["\n## 6. Per channel\n", "| Channel | Shorts listed | Channel median views | n analysed | TOP med views | LOW med views |", "|---|---|---|---|---|---|"]
+    for ch in sorted(gx):
+        xs = [x for x, _ in gx[ch]]
+        L.append(f"| {ch} | {xs[0]['ch_n']} | {int(xs[0]['ch_median']):,} | {len(xs)} | {int(S.median([x['views'] for x in xs if x['tier'] == 'top'] or [0])):,} | {int(S.median([x['views'] for x in xs if x['tier'] == 'low'] or [0])):,} |")
+    ip = os.path.join(a.outdir, "interpretation.md")
+    if os.path.exists(ip): L += ["\n" + open(ip, encoding="utf-8").read()]
+    open(os.path.join(a.outdir, "analysis_summary.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
+    H = ["# Hook library — first 3 s of every analysed Short\n", "| Tier | Channel | Views | Title | First word s | First cut s | Dur s | Spoken hook (0–3 s) |", "|---|---|---|---|---|---|---|---|"]
+    for x in sorted(d, key=lambda x: (x["ch"], -x["views"])):
+        H.append(f"| {x['tier']} | {x['ch']} | {x['views']:,} | {x['title'][:60].replace('|', '/')} | {x['first_word']} | {x['first_cut']} | {x['dur']} | {x['hook'].replace('|', '/')} |")
+    open(os.path.join(a.outdir, "hooks_library.md"), "w", encoding="utf-8").write("\n".join(H) + "\n")
+    print("wrote", os.path.join(a.outdir, "analysis_summary.md"), len(d), "videos")
+
+if __name__ == "__main__":
+    main()

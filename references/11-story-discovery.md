@@ -1,47 +1,77 @@
-# 11 — Story discovery and viral-potential scoring
+# 11 — Story discovery: Story Scout, Topic Critic, evidence gate
 
-Pick stories by evidence, not taste. Run this as an independent step before any writing.
+Pick stories by evidence, not taste, and never by "first idea that is easy to make". Discovery is two
+independent roles and one machine gate. **No discovery report with `gate.json` status PASS = no script, no render.**
 
-## 1. Sources to mine (rotate)
+```
+Story Scout ──► discovery.json ──► Topic Critic (fresh context) ──► critic.json ──► tools/topic_gate.py ──► gate.json (PASS/BLOCK)
+```
 
-| Source | What to pull |
-|---|---|
-| Investigation reports (NTSB, TSB, AAIB, BEA, CSB, NASA, Coast Guard, national rail/structural boards) | findings with a single concrete cause |
-| Wikipedia lists: "List of structural failures and collapses", "List of software bugs", "Engineering disasters", "Category:Industrial accidents", "List of aviation accidents by cause" | candidate pool |
-| Engineering case studies (ASCE, IEEE Spectrum "Risk Factor", Hackaday failures, Ars Technica) | modern and tech-era stories |
-| Reddit r/engineering, r/CatastrophicFailure, r/EngineeringPorn top of year | what people already share |
-| Anniversaries in the next 30 days | timely angle |
-| Comments on your own top videos ("do X next") | demand signal |
+## 1. Why people watch and share a story [R]
 
-## 2. Demand check (outside evidence that people want the story)
-
-For each candidate, record:
-- **YouTube search**: views of the top 5 Shorts on the topic and their age (views/day). High views/day for *other* creators on the same story = proven demand; if > 5 Shorts already exist with > 1 M views, you need a new angle.
-- **Long-form proof**: a long video on the topic with > 1 M views but few Shorts = gap.
-- **Google Trends / Wikipedia pageviews** (pageviews API) for the last 90 days — rising interest is a bonus.
-- **Novelty**: has *your* audience seen it? (search your own uploads and your top 10 competitors).
-
-## 3. Viral potential score (0–40) — use together with the 25-point story score in `09`
-
-| Factor | 0 | 5 |
+| Driver | What it means for topic choice | Source |
 |---|---|---|
-| Proven demand (views/day of existing coverage) | none | many viral pieces |
-| Gap (few Shorts, or a new angle) | saturated | untouched angle |
-| Visual availability (real, licensed material) | none | strong photos/footage/documents |
-| One-sentence cause | complex | one word / number |
-| Emotion strength | flat | awe / anger / anxiety obvious |
-| Social currency ("send this to…") | none | obvious person to send to |
-| Timeliness | none | anniversary / in the news |
-| Audience fit (engineers, students, tech) | none | direct |
+| Curiosity gap | the viewer knows the outcome is strange but not why | Loewenstein 1994 |
+| High-arousal emotion | awe, anger, anxiety get shared; sadness and calm do not | Berger & Milkman 2012 |
+| Social currency / practical value | "send this to the engineer you know"; "this is in your house" | Berger 2013 (*Contagious*) |
+| Concreteness | a single object, number, person beats a system | Heath & Heath 2007 |
+| Identification | a person who had to decide under pressure | narrative transportation, Green & Brock 2000 |
+These explain why people *can* care. They do not tell you which topic will beat another this month: only demand evidence does.
 
-Rule: produce only stories ≥ 28/40 AND ≥ 20/25.
+## 2. Story Scout (role 1)
 
-## 4. Learn from your own results
+Produce **≥ 5 candidate topics, each with ≥ 3 angles**, from at least three source families:
 
-After each batch, tag each video with its hook type, emotion, length, structure and story category, and compare *within your own channel* (top third vs. bottom third by viewed-vs-swiped and average % viewed). Update the weights above with what actually separated them.
+| Source family | Pull |
+|---|---|
+| Investigation reports (NTSB, AAIB, BEA, TSB, CSB, NASA, NIST, court records) | single concrete cause, primary source |
+| Wikipedia lists + pageviews API (`wikimedia.org/api/rest_v1/metrics/pageviews/per-article/...`) | candidate pool + 90-day interest |
+| YouTube Shorts and long-form on the topic (`tools/outliers.py`) | demand, saturation, outlier multiples |
+| Google Trends (5-year and 90-day) | rising / flat / falling; spikes from news |
+| Reddit (r/CatastrophicFailure, r/engineering, r/todayilearned; top of year) | what people already share and argue about |
+| Comments on competitors' and your own top videos | explicit "do X next", confusion, debate |
+| Anniversaries in the next 30–60 days, current news | timeliness |
 
-## Outlier multiple, not raw views [M/R]
+For every topic record **evidence with URLs** (schema `templates/discovery.json`):
+- `existing_shorts` / `long_form`: views, age, channel median → **outlier multiple = views ÷ channel median** and **views/day**. Raw views rank channel size, not ideas. Exclude each channel's newest ~10 uploads (views not settled).
+- `wikipedia`, `trends`, `reddit`, `comments`: at least the URL and the number you read.
+- `sources`: ≥ 2, at least one primary. `archive`: ≥ 2 licensed real items (`tools/find_archive.py`).
+- `scores` 0–5 and `confidence` high/medium/low for: demand, gap, visual, clarity (one-sentence cause a 12-year-old gets), emotion, facts, fit.
 
-Raw views rank channel size, not ideas. Score every candidate reference video as **views ÷ its own channel's median** (≥ 4 videos per channel, preferably ≥ 30, newest ~10 excluded because their views are not settled). A 400 k Short on a channel whose median is 30 k (13×) is worth studying; a 4 M Short on a channel whose median is 3 M (1.3×) is a normal day. `tools/third_party/youtube-agent-skill/swipe.py collected.json --min 2.0` ranks a `yt-dlp --flat-playlist -J` export this way. When you present outliers: the top five with multiples, the hook formula each used (a judgement about the title, not a proven cause), the ONE structural thing they share, and which one this channel can make this week with real archive.
+### Demand vs gap (the classic mistake)
+| Evidence | Meaning | Action |
+|---|---|---|
+| Long-form ≥ 1 M views or ≥ 3× its channel median, few Shorts | **gap** | strong candidate |
+| Many Shorts ≥ 1 M views (≥ 5) | saturated | only with an angle of novelty ≥ 4 and a `closest_existing` URL that proves it differs |
+| Few videos *and* low pageviews / flat Trends / no Reddit | **no demand**, not a gap | reject or park |
+| One viral Short, nothing else | single outlier; packaging may have carried it | need a second evidence type |
+Small channels count more than giants: a 10× outlier on a 5 k-subscriber channel shows the topic and packaging carried it.
 
-Small/new channels matter more than giants here: a 10× outlier on a 5 k-subscriber channel shows the *topic and packaging* carried it, not the audience.
+### Topic ≠ angle
+The **topic** is the event (Hyatt Regency walkway collapse). The **angle** is the story you tell about it
+("one rod was changed to two"; "the engineer who signed it"; "why the second walkway made it worse"). Score angles on:
+surprise, stakes, specificity, visual_hook (can frame 0 show it?), payoff, novelty (vs `closest_existing`). Every angle needs a hook line and a payoff line.
+
+## 3. Topic Critic (role 2, independent)
+
+A different model or a fresh session with **only** `discovery.json` (not the Scout's reasoning). Its job is to kill topics. For each topic:
+1. Open every URL. Mark evidence that is missing, misread, stale or irrelevant.
+2. Search for the three strongest existing Shorts on the topic; if the Scout missed them, saturation is understated.
+3. Attack the best angle: "Would a viewer who has seen the top existing Short learn anything new?"
+4. Attack clarity: explain the cause in one sentence to a non-engineer; if you can't, it fails.
+5. Name the bias: did the Scout prefer this because it is easy to produce (assets already on disk)?
+Return `critic.json`: `{ "<topic id>": {"verdict": "pass|reject", "reasons": [...], "attacks": [...]} }` (`templates/topic_critic.md`).
+
+## 4. The gate (`tools/topic_gate.py`) — non-compensatory
+
+1. **Hard gates (any fail = topic out):** ≥ 2 demand-evidence types with URLs; ≥ 2 sources incl. 1 primary; ≥ 2 licensed archive items; facts ≥ 3 and clarity ≥ 3; Topic Critic verdict pass; ≥ 3 angles.
+2. **Floors:** every component ≥ 2 after penalties.
+3. **Uncertainty penalty:** confidence medium −0.5, low (or missing) −1. Demand without evidence is capped at 2.
+4. **Score:** geometric mean of components → 0–100 (one weak part drags everything down; an average would hide it). Topic ≥ 60 and best angle ≥ 60.
+5. **Rank** by the weaker of topic and angle. Selected + runner-up are written to `gate.json` and `discovery_report.md`.
+6. **Report-level block:** < 5 topics, or no topic passes.
+
+The numbers 60 / floor 2 / 2 evidence types are [E] defaults. Recalibrate them with `tools/calibrate.py` once you have ≥ 30 published videos.
+
+## 5. Learn from your own results
+After each batch log, per video, topic id, angle id, gate scores, critic score and 7-day metrics (views/day, viewed-vs-swiped, average % viewed) in `data/calibration.csv`, then run `tools/calibrate.py`. If gate scores do not rank your own results (Spearman ρ CI includes 0), change the weights — and say so.

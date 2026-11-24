@@ -19,7 +19,9 @@ A hook is three things at once, all inside 0–2 s: **the first frame**, **the f
 | 11 | Comparison | "[A] vs [B]: one of them [failed]" | "Same bridge design. One stood for 100 years. One fell in four months." |
 | 12 | Still happening | "[Danger] is still [present]" | "This bug is still in millions of devices." |
 
-## B. Hook score (score every candidate, keep ≥ 24/30)
+## B. Hook score [E] (score every candidate, keep ≥ 24/30)
+
+This is a drafting checklist, not a predictor: no automatic hook score in this skill separates hits from misses in the v2 data (`hookscore_story.py` d = +0.08, CI includes 0). Use it to reject weak drafts, then let the topic gate and the critic decide.
 
 | Test | 0 | 3 | 5 |
 |---|---|---|---|

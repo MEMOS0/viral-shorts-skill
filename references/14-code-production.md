@@ -57,8 +57,8 @@ Pipe frames to FFmpeg rather than writing thousands of PNGs: `ffmpeg -f rawvideo
 
 ## 7. Self-checks that build.py must run
 - `--preview`: renders at 540×960, every 2nd frame, plus `contact_2fps.jpg` (tools/critic_pack.py).
-- Asserts: no shot without a purpose field; no asset used twice; every archive shot has a label; nothing outside the safe area; ≥ 1 visual change every 2.5 s (a move, a reveal or a cut); the first cut before 4 s [M]; LUFS and true peak within spec; no black or frozen frames over 1.5 s unless the shot is a planned held frame.
-- Then run `tools/critic_pack.py out.mp4` and an independent critic (12-critic-agent). FIX at most twice.
+- Asserts: no shot without a purpose field; no asset used twice; every archive shot has a label; nothing outside the safe area; ≥ 1 visual change every 2.5 s (a move, a reveal or a cut); the first cut before 4 s [M]; LUFS and true peak within spec; no black frame over 0.3 s and no unplanned frozen frame of 0.5 s or more (planned holds are listed in `holds.json`).
+- Then run `python tools/critic_pack.py out.mp4 critic/ --holds holds.json` and give `critic/` (proxy.mp4, contact sheets, pack.md) to an independent critic (12-critic-agent). FIX at most twice.
 
 ## 8. What the model must deliver per video
 `plan.md`, `vo.txt`, `build.py` (complete, runnable, no placeholders except the narration audio), `blender/*.py` if used, an asset list with URLs and licences (or the `find_archive.py` query file), and the expected runtime. If the model can run code, it renders `--preview` first, inspects the contact sheet itself, fixes it, then renders the final.

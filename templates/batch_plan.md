@@ -6,6 +6,6 @@
 Variation checks:
 - No two consecutive rows share hook type + look + ending.
 - Emotions mixed (awe / anger / anxiety) across the batch.
-- Lengths vary (some 25–30 s, most 35–45 s, a few 50–60 s).
+- Lengths follow each story (no measured best length; 45–60 s was the most common TOP band, 20–35 s over-represented among LOW). Vary them across the batch.
 - ≤ 1 in 4 rows has a product bridge.
 - Every story score ≥ 20/25.

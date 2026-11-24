@@ -1,0 +1,37 @@
+{
+  "_comment": "Story Scout output. Shape only: every value below is a placeholder; replace with what you read, with URLs. tools/topic_gate.py rejects topics without URLs. Need >= 5 topics, each >= 3 angles.",
+  "brief": "engineering-disaster Shorts for a general audience, English, YT + IG",
+  "date": "YYYY-MM-DD",
+  "topics": [
+    {
+      "id": "t1",
+      "title": "<event name>",
+      "category": "structural | aviation | software | maritime | space | industrial | other",
+      "one_sentence_cause": "<what failed, in words a 12-year-old gets>",
+      "evidence": {
+        "existing_shorts": [{"url": "https://www.youtube.com/shorts/<id>", "views": 0, "age_days": 0, "channel_median": 0}],
+        "long_form": [{"url": "https://www.youtube.com/watch?v=<id>", "views": 0, "age_days": 0, "channel_median": 0}],
+        "wikipedia": [{"url": "https://en.wikipedia.org/wiki/<article>", "pageviews_90d": 0}],
+        "trends": [{"url": "https://trends.google.com/trends/explore?q=<q>", "direction": "rising | flat | falling"}],
+        "reddit": [{"url": "https://www.reddit.com/r/<sub>/comments/<id>", "score": 0}],
+        "comments": [{"url": "<video url>", "quote": "<viewer asks for / is confused by>"}],
+        "sources": [{"url": "<official report>", "type": "primary"}, {"url": "<article>", "type": "secondary"}],
+        "archive": [{"url": "<image page>", "licence": "PD | CC BY | CC BY-SA"}]
+      },
+      "scores": {"demand": 0, "gap": 0, "visual": 0, "clarity": 0, "emotion": 0, "facts": 0, "fit": 0},
+      "confidence": {"demand": "low", "gap": "low", "visual": "low", "clarity": "low", "emotion": "low", "facts": "low", "fit": "low"},
+      "angles": [
+        {
+          "id": "t1a1",
+          "logline": "<the story you tell, one sentence>",
+          "hook": "<first spoken line>",
+          "payoff": "<last line>",
+          "why_new": "<what the top existing Short does not show>",
+          "closest_existing": "https://www.youtube.com/shorts/<id>",
+          "scores": {"surprise": 0, "stakes": 0, "specificity": 0, "visual_hook": 0, "payoff": 0, "novelty": 0},
+          "confidence": {"surprise": "low", "stakes": "low", "specificity": "low", "visual_hook": "low", "payoff": "low", "novelty": "low"}
+        }
+      ]
+    }
+  ]
+}

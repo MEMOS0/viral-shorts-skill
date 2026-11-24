@@ -18,7 +18,7 @@ Rejected by the user and banned:
 | Parameter | Target for a 30–45 s story Short |
 |---|---|
 | Median shot length | 1.5–2.5 s (pure storytelling), 2.5–3.5 s (explainers with diagrams) |
-| Longest static hold | ≤ 3 s, except one deliberate "silence beat" (≤ 1.5 s of black or freeze) at the turn |
+| Longest static hold | ≤ 3 s, except one deliberate "silence beat" (≤ 1.5 s of black or freeze) at the turn, declared as `hold` in storyboard.json so the 0.5 s freeze gate treats it as planned |
 | First cut | 0.8–2.0 s (the frame 0 image must earn the first second, then change) |
 | Environment change | every 2–3 s change something big: location, angle, scale, close-up vs. wide |
 | Cut points | on the stressed word of the narration, or on action (object hits, door closes, number lands) |

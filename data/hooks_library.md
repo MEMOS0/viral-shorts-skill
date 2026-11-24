@@ -103,7 +103,7 @@
 | top | NEOexplains | 11,000,000 | Why Our Ocean Maps Are Terrible | 0.0 | 0.07 | 58.9 | This map right here shows all parts of the ocean floors |
 | top | NEOexplains | 11,000,000 | This Map Shows Things You Normally Can’t See on a Map | 0.0 | None | 45.9 | This image of the Earth at night can teach us a whole lot about life |
 | top | NEOexplains | 10,000,000 | Should We Expand Manhattan? | 0.0 | 29.67 | 34.5 | This is what it would look like if Manhattan was expanded further into |
-| mid | NEOexplains | 8,700,000 | The Next Tallest Building on the Planet? | 0.0 | 23.6 | 58.5 | Both of these buildings were designed by the same architect, Adrian Smith. |
+| top | NEOexplains | 8,700,000 | The Next Tallest Building on the Planet? | 0.0 | 23.6 | 58.5 | Both of these buildings were designed by the same architect, Adrian Smith. |
 | mid | NEOexplains | 6,800,000 | The City of Private Beaches | 0.0 | 12.43 | 59.6 | This is a city where pretty much every single resident has a private beach. |
 | mid | NEOexplains | 3,700,000 | Why Are Soviet Medals on the Moon? | 0.0 | 7.77 | 53.5 | Even though the Russians never landed on the moon, there are two very special |
 | mid | NEOexplains | 3,600,000 | The Korean Peninsula at Night | 0.0 | None | 39.8 | Take a look at the Korean Peninsula at night and just how brightly |
@@ -135,7 +135,7 @@
 | top | PlainlyDifficult | 75,000 | Atomic Gardens / Plainly Difficult Nuclear Short | 0.0 | 7.83 | 53.5 | Did you know, starting in the 1950s, atoms |
 | top | PlainlyDifficult | 59,000 | Kramatorsk Radioactive Apartment Disaster / Plainly Difficul | 0.0 | 13.4 | 59.8 | Did you know, living in this apartment block could be deadly? |
 | mid | PlainlyDifficult | 50,000 | Portable Nuclear Weapons / Plainly Difficult Short | 0.0 | 6.7 | 52.9 | Did you know this man is skydiving with a nuclear bomb? |
-| mid | PlainlyDifficult | 50,000 | What we know so far about The Odisha train collision | 0.0 | 18.2 | 57.4 | So what do we know so far? Well, on 2nd June, |
+| top | PlainlyDifficult | 50,000 | What we know so far about The Odisha train collision | 0.0 | 18.2 | 57.4 | So what do we know so far? Well, on 2nd June, |
 | mid | PlainlyDifficult | 41,000 | Britain’s Nuclear Letter of Last resort / Plainly Difficult  | 0.0 | 7.4 | 56.9 | Did you know, Britain's nuclear deterrence is reliant on |
 | mid | PlainlyDifficult | 40,000 | The Alnwick Garden Poison Garden / Plainly Difficult Shorts | 0.0 | 3.37 | 54.6 | It might not look like it, but this garden could kill you. |
 | mid | PlainlyDifficult | 39,000 | Man Sets Fire to town Cohoes 2017 / Plainly Difficult Short  | 0.0 | 3.57 | 44.0 | What causes town to burn down? So when they say don't try this |
