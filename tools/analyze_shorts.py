@@ -1,8 +1,8 @@
 import json,subprocess,os,re,sys,whisper,glob
 import numpy as np
 from PIL import Image
-P={p["id"]:p for p in json.load(open("pick.json"))}
-m=whisper.load_model("small.en"); out=json.load(open("full.json")) if os.path.exists("full.json") else []
+P={p["id"]:p for p in json.load(open(os.environ.get("PICK","pick.json")))}
+m=whisper.load_model("base.en"); out=json.load(open("full.json")) if os.path.exists("full.json") else []
 done={o["id"] for o in out}; os.makedirs("sheets",exist_ok=True)
 def dur(f): return float(subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","csv=p=0",f],capture_output=True,text=True).stdout.strip() or 0)
 for f in sorted(glob.glob("v/*.mp4")):

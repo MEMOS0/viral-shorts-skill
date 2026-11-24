@@ -1,6 +1,6 @@
 # 04 — Second-by-second blueprint
 
-Plan every Short on a time grid before writing visuals. Times below are for a **35–45 s** story Short (the sweet spot measured in `data/`). Scale proportionally for 25 s or 60 s.
+Plan every Short on a time grid before writing visuals. Times below are for a **35–45 s** story Short. This length is an *editorial default* for a new channel (short enough to finish, long enough for two value flips), not a measured optimum — see `data/analysis_summary.md` section 3 for the measured duration distribution by tier. Scale proportionally for 25 s or 60 s.
 
 ## Master grid (40 s example)
 

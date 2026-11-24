@@ -1,6 +1,6 @@
 # 10 — QA gates and scoring rubric
 
-A Short ships only when every gate passes. Score it; under 85/100 → fix and re-score.
+A Short ships only when every gate passes. Pre-render, the producer scores the plan (< 85 → fix). After render, the **independent critic** (`12-critic-agent.md`) scores the actual video; only the critic's SHIP verdict ships it.
 
 ## Scoring rubric (100)
 
