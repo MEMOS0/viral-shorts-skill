@@ -67,3 +67,11 @@ def test_cli_exit_code(tmp_path):
     import json
     p = tmp_path / "d.json"; p.write_text(json.dumps(disc(3)))
     assert G.main([str(p), "--out", str(tmp_path)]) == 2 and (tmp_path / "discovery_report.md").exists()
+
+def test_low_demand_blocks_even_if_everything_else_is_perfect():
+    for dem in (1, 2):
+        d = disc(); d["topics"][0]["scores"] = {k: 5 for k in G.TOPIC_KEYS}; d["topics"][0]["scores"]["demand"] = dem
+        row = [r for r in G.evaluate(d, CRIT)["ranking"] if r["id"] == "t0"][0]
+        assert not row["ok"] and any("demand" in f for f in row["topic"]["fails"])
+    d = disc(); [t["scores"].update(demand=1) for t in d["topics"]]
+    assert G.evaluate(d, CRIT)["status"] == "BLOCK"

@@ -13,6 +13,8 @@ ANGLE_KEYS = ("surprise", "stakes", "specificity", "visual_hook", "payoff", "nov
 DEMAND_TYPES = ("existing_shorts", "long_form", "wikipedia", "trends", "reddit", "comments")
 PENALTY = {"high": 0.0, "medium": 0.5, "low": 1.0}
 FLOOR, MIN_TOPICS, MIN_ANGLES, PASS_SCORE = 2, 5, 3, 60
+# Demand and facts are make-or-break: weak demand cannot be bought back by visuals or emotion.
+TOPIC_FLOORS = dict(demand=3, facts=3)
 
 def has_url(x): return isinstance(x, dict) and str(x.get("url", "")).startswith("http")
 
@@ -53,7 +55,8 @@ def gate_topic(t):
     if sat >= 5: eff["gap"] = min(eff["gap"], 2)
     if nd == 0 and eff["gap"] >= 3: fails.append("gap claimed without demand evidence: absence of videos is not a gap if nobody searches for it")
     for k in TOPIC_KEYS:
-        if eff[k] < FLOOR: fails.append(f"{k}: effective {eff[k]} < floor {FLOOR}")
+        fl = TOPIC_FLOORS.get(k, FLOOR)
+        if eff[k] < fl: fails.append(f"{k}: effective {eff[k]} < floor {fl}")
     for k in ("facts", "clarity"):
         if eff[k] < 3: fails.append(f"{k}: effective {eff[k]} < 3 (hard gate)")
     return dict(score=geo100(eff.values()), eff=eff, fails=fails, demand_types=nd, best_outlier=best, saturated_shorts=sat)

@@ -71,7 +71,7 @@ Return `critic.json`: `{ "<topic id>": {"verdict": "pass|reject", "reasons": [..
 5. **Rank** by the weaker of topic and angle. Selected + runner-up are written to `gate.json` and `discovery_report.md`.
 6. **Report-level block:** < 5 topics, or no topic passes.
 
-The numbers 60 / floor 2 / 2 evidence types are [E] defaults. Recalibrate them with `tools/calibrate.py` once you have ≥ 30 published videos.
+The numbers 60 / floor 2 (demand and facts: floor 3, so a topic with demand 1–2 is blocked however strong its visuals or emotion) / 2 evidence types are [E] defaults. Recalibrate them with `tools/calibrate.py` once you have ≥ 30 published videos.
 
 ## 5. Learn from your own results
 After each batch log, per video, topic id, angle id, gate scores, critic score and 7-day metrics (views/day, viewed-vs-swiped, average % viewed) in `data/calibration.csv`, then run `tools/calibrate.py`. If gate scores do not rank your own results (Spearman ρ CI includes 0), change the weights — and say so.
