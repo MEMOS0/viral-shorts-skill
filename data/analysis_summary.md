@@ -1,113 +1,102 @@
-# Measured analysis — 76 top story Shorts, 16 channels
+# Measured analysis — 302 Shorts, 19 channels, tiered within channel
 
-Method: each Short downloaded (480p), transcribed with Whisper word timestamps, scene cuts with FFmpeg `scene>0.28`, momentary loudness (EBU R128) per second, contact sheets at 2 fps, first-vs-last frame difference (loop). Script: `tools/analyze_shorts.py`. Selection: the 5 most-viewed Shorts of each channel.
+Sample: for each channel, from its latest ~150 Shorts (newest 10 dropped because their views are not settled), the 6 most-viewed (TOP), 5 around the median (MID) and 5 least-viewed (LOW). Comparing tiers *inside the same channel* controls for channel size and audience; it shows what separates a channel's hits from its misses, not what makes a channel big.
 
-## 1. Global distributions
+## 1. Tier comparison (median of each metric)
 
-| Metric | Median | P25 | P75 | Min | Max |
-|---|---|---|---|---|---|
-| Duration (s) | 58.45 | 37.3 | 98.0 | 6.9 | 179.4 |
-| Cuts per video | 8.0 | 3 | 23 | 0 | 104 |
-| Median shot (s) | 4.99 | 2.4 | 8.3 | 0.13 | 40.87 |
-| First cut (s) | 4.21 | 2.04 | 6.64 | 0.03 | 32.21 |
-| Words per minute | 159.5 | 128 | 186 | 0 | 275 |
-| First word (s) | 0.0 | 0.0 | 0.0 | 0.0 | 12.06 |
-| Integrated loudness (LUFS) | -15.7 | -19.3 | -12.7 | -25.8 | -8.2 |
-| First/last frame diff (0–255) | 53.5 | 41.5 | 68.3 | 4.1 | 153.0 |
-| Cuts per second | 0.13 | 0.07 | 0.29 | 0.0 | 1.74 |
-
-## 2. Per channel (medians)
-
-| Channel | n | Views med | Dur | Cuts | Med shot | First word | WPM | LUFS |
-|---|---|---|---|---|---|---|---|---|
-| MarkRober | 5 | 638,000,000 | 44.5 | 22 | 1.83 | 0.0 | 111 | -12.5 |
-| NileRed | 5 | 127,000,000 | 55.5 | 6 | 6.77 | 0.0 | 128 | -17.8 |
-| veritasium | 5 | 53,000,000 | 58.1 | 18 | 2.4 | 0.0 | 141 | -18.0 |
-| zackdfilms | 5 | 22,000,000 | 35.3 | 0 | 35.19 | 0.0 | 177 | -10.3 |
-| RealEngineering | 5 | 15,000,000 | 58.0 | 10 | 3.92 | 0.0 | 159 | -20.1 |
-| Kurzgesagt | 5 | 11,000,000 | 57.4 | 7 | 6.5 | 0.0 | 197 | -14.2 |
-| MrBallen | 5 | 4,300,000 | 167.7 | 31 | 4.63 | 0.0 | 243 | -11.6 |
-| DailyDoseOfInternet | 5 | 3,500,000 | 15.8 | 1 | 8.23 | 0.0 | 22 | -19.3 |
-| TheInfographicsShow | 1 | 3,000,000 | 29.0 | 3 | 6.06 | 0.92 | 159 | -13.7 |
-| HistoryLegends | 5 | 2,700,000 | 54.1 | 4 | 10.91 | 0.0 | 157 | -11.3 |
-| PracticalEngineeringChannel | 5 | 971,000 | 59.6 | 3 | 7.46 | 0.0 | 177 | -18.9 |
-| simplehistory | 5 | 841,000 | 141.3 | 11 | 9.85 | 0.0 | 159 | -14.1 |
-| bigthink | 5 | 820,000 | 178.9 | 51 | 2.54 | 0.0 | 150 | -20.9 |
-| TheB1M | 5 | 671,000 | 65.0 | 21 | 2.55 | 0.0 | 174 | -20.1 |
-| EmergencyAwesome | 5 | 182,000 | 59.7 | 41 | 0.2 | 0.0 | 181 | -19.0 |
-| Mustard | 5 | 12,000 | 22.7 | 5 | 1.84 | 0.0 | 40 | -13.7 |
-
-## 3. Full-runtime profile (normalised to 10 % bins of each video)
-
-Cut rate = cuts per second inside the bin; word rate = words per second; loudness = mean momentary LUFS relative to that video's mean.
-
-| Runtime bin | Cut rate | Word rate | Loudness Δ dB | Silence share (>1 s gaps) |
+| Metric | TOP | MID | LOW | TOP vs LOW |
 |---|---|---|---|---|
-| 0–10 % | 0.11 | 3.11 | 1.4 | 22 % |
-| 10–20 % | 0.17 | 2.81 | 0.7 | 20 % |
-| 20–30 % | 0.12 | 2.8 | 0.7 | 13 % |
-| 30–40 % | 0.17 | 2.92 | 0.2 | 17 % |
-| 40–50 % | 0.11 | 2.72 | 0.7 | 12 % |
-| 50–60 % | 0.14 | 2.9 | 1.2 | 11 % |
-| 60–70 % | 0.11 | 2.77 | 0.8 | 12 % |
-| 70–80 % | 0.11 | 2.6 | -0.3 | 14 % |
-| 80–90 % | 0.09 | 2.73 | -0.3 | 13 % |
-| 90–100 % | 0.09 | 2.21 | -1.3 | 5 % |
+| dur | 57.9 | 59.6 | 53.3 | ≈ same |
+| cuts_per_10s | 1.38 | 1.24 | 1.22 | higher |
+| med_shot | 4.67 | 5.34 | 4.37 | ≈ same |
+| first_cut | 4.27 | 4.79 | 5.0 | lower |
+| first_word | 0.0 | 0.0 | 0.0 | ≈ same |
+| wpm | 177.0 | 179 | 179 | ≈ same |
+| lufs | -15.15 | -17.1 | -16.0 | higher |
+| loopdiff | 57.95 | 54.2 | 55.2 | ≈ same |
+| hook_words | 10.0 | 10 | 10 | ≈ same |
+| hook_number | 25 % | 26 % | 16 % | higher |
+| hook_you | 26 % | 19 % | 24 % | ≈ same |
+| hook_question | 21 % | 20 % | 23 % | ≈ same |
+| hook_this | 18 % | 7 % | 12 % | higher |
+| hook_I | 14 % | 16 % | 19 % | lower |
+| but_pos | 44.74 | 44.19 | 44.03 | ≈ same |
+| silence_gaps | 0.0 | 0 | 0 | ≈ same |
+| end_word_rate | 2.64 | 2.78 | 2.65 | ≈ same |
+| start_word_rate | 3.34 | 3.14 | 3.1 | ≈ same |
 
-## 4. First 5 seconds, second by second (share of videos)
+## 2. Within-channel paired difference (TOP median − LOW median per channel; share of channels where TOP > LOW)
 
-| Second | has a cut | has speech |
-|---|---|---|
-| 0–1 s | 8 % | 97 % |
-| 1–2 s | 17 % | 92 % |
-| 2–3 s | 16 % | 84 % |
-| 3–4 s | 17 % | 88 % |
-| 4–5 s | 22 % | 82 % |
+| Metric | Channels | Median diff | TOP > LOW in |
+|---|---|---|---|
+| dur | 19 | 1.25 | 11/19 |
+| cuts_per_10s | 19 | -0.13 | 7/19 |
+| med_shot | 19 | 0.62 | 12/19 |
+| first_cut | 19 | -1.54 | 4/19 |
+| first_word | 19 | 0.0 | 0/19 |
+| wpm | 19 | 3.5 | 13/19 |
+| lufs | 19 | 0.75 | 13/19 |
+| loopdiff | 19 | -9.5 | 9/19 |
+| hook_words | 19 | 1 | 11/19 |
+| hook_number | 19 | 0.0 | 3/19 |
+| hook_you | 19 | 0.0 | 4/19 |
+| hook_question | 19 | 0.0 | 3/19 |
+| hook_this | 19 | 0.0 | 5/19 |
+| hook_I | 19 | 0.0 | 1/19 |
+| but_pos | 19 | -2.66 | 9/19 |
+| silence_gaps | 19 | 0.0 | 5/19 |
+| end_word_rate | 19 | 0.11 | 10/19 |
+| start_word_rate | 19 | 0.23 | 14/19 |
 
-## 5. Where the turn happens
+## 3. Duration distribution (all tiers)
 
-Position (as % of runtime) of the first occurrence after 25 % of runtime of each turn marker.
+| Duration | TOP | MID | LOW |
+|---|---|---|---|
+| 0–20 s | 1 | 0 | 0 |
+| 20–35 s | 6 | 6 | 14 |
+| 35–45 s | 16 | 12 | 17 |
+| 45–60 s | 55 | 39 | 34 |
+| 60–90 s | 8 | 15 | 22 |
+| 90–181 s | 26 | 23 | 8 |
 
-| Marker | Videos using it | Median position |
-|---|---|---|
-| but | 47 | 40 % |
-| you see | 1 | 71 % |
-| turns out | 1 | 93 % |
-| however | 4 | 53 % |
-| instead | 1 | 31 % |
-| actually | 21 | 45 % |
-| until | 6 | 71 % |
-| that's when | 0 |  % |
-| so | 36 | 48 % |
-| then | 29 | 62 % |
+## 4. Per channel
 
-## 6. Spoken-hook features (first 3 s)
+| Channel | Shorts listed | Channel median views | n analysed | TOP med views | LOW med views |
+|---|---|---|---|---|---|
+| EngineeringExplained | 61 | 2,300,000 | 16 | 23,000,000 | 196,000 |
+| HistoryLegends | 150 | 211,500 | 16 | 3,900,000 | 14,000 |
+| MagnatesMedia | 29 | 68,000 | 16 | 242,500 | 24,000 |
+| MarkRober | 127 | 59,000,000 | 16 | 629,000,000 | 3,200,000 |
+| MentourPilot | 80 | 495,500 | 16 | 3,550,000 | 39,000 |
+| MrBallen | 150 | 388,500 | 16 | 4,600,000 | 54,000 |
+| NEOexplains | 15 | 3,700,000 | 15 | 11,000,000 | 1,100,000 |
+| NileRed | 138 | 16,000,000 | 16 | 154,000,000 | 2,500,000 |
+| PlainlyDifficult | 15 | 41,000 | 15 | 85,000 | 18,000 |
+| PracticalEngineeringChannel | 17 | 560,000 | 16 | 901,000 | 193,000 |
+| RealEngineering | 79 | 453,000 | 16 | 12,500,000 | 74,000 |
+| Sideprojects | 150 | 24,500 | 16 | 3,850,000 | 5,700 |
+| TheB1M | 150 | 104,000 | 16 | 907,000 | 21,000 |
+| TheInfographicsShow | 150 | 572,500 | 16 | 6,100,000 | 78,000 |
+| bigthink | 150 | 33,500 | 16 | 804,500 | 11,000 |
+| kurzgesagt | 135 | 2,900,000 | 16 | 14,000,000 | 681,000 |
+| simplehistory | 150 | 37,500 | 16 | 1,250,000 | 9,100 |
+| veritasium | 89 | 6,000,000 | 16 | 52,500,000 | 965,000 |
+| zackdfilms | 150 | 8,950,000 | 16 | 26,000,000 | 2,600,000 |
 
-| Feature | Share |
-|---|---|
-| statement | 29 % |
-| you | 24 % |
-| number | 22 % |
-| question | 21 % |
-| first person | 18 % |
-| superlative | 16 % |
-| this/demonstrative | 9 % |
+## 5. What the tier comparison says (read this before using any number)
 
-## 7. Loops
+Measured on 302 Shorts (113 TOP, 95 MID, 93 LOW) from 19 channels. A "difference" only counts here if it shows up both in the pooled medians and inside most channels.
 
-12 of 76 videos end on a frame within 25/255 of their first frame (visual loop).
+**Consistent but small differences [M]:**
+- **The first cut comes earlier in hits.** TOP median 4.3 s vs LOW 5.0 s; TOP was earlier in 15 of 19 channels (median −1.5 s). This is the most consistent signal in the data: change the picture before ~4 s.
+- **The opening is denser.** Words per second in the first 10 % were higher in TOP in 14 of 19 channels.
+- **Hits are mixed slightly louder.** −15.2 vs −16.0 LUFS; louder in 13 of 19 channels. Master to about −14 to −15 LUFS and don't ship quiet.
+- **Length:** 45–60 s is the most common TOP band (55 of 113). LOW has more 20–35 s videos (14 vs 6) and more 60–90 s videos (22 vs 8). 35–45 s is **not** better than other bands (16 TOP vs 17 LOW). Long story Shorts of 90 s or more appear more often in TOP (26 vs 8) but mostly on established channels.
 
-## 8. What the numbers mean (rules derived for the skill)
+**No meaningful difference [M]:** hook length (10 words), first word at 0.0 s (everyone does it, so it is table stakes, not an edge), narration speed (about 177–179 WPM in every tier; this run used Whisper base.en, while the v1 top-only run measured 159 with small.en, so compare speeds only within the same model), the position of the first "but" (~44 %), the loop difference and silence gaps.
 
-1. **Speech starts at 0.0 s in the median video and in 97 % of videos within the first second.** A silent or music-only opening is an outlier among top Shorts → rule: first word ≤ 0.3 s.
-2. **Word rate is highest in the first 10 % (3.1 words/s ≈ 187 wpm) and lowest in the last 10 % (2.2 words/s).** Top Shorts open fast and land slower: the payoff gets air. Plan the hook at ~180 wpm and the payoff line slower, with a ≤ 1 s tail.
-3. **Loudness is +1.4 dB above the video's mean in the first 10 % and −1.3 dB in the last 10 %.** Start with a hit; don't end on the loudest moment unless it is the payoff impact.
-4. **The first "but" after the set-up arrives at a median 40 % of runtime; "then" at 62 %; "until" at 71 %.** Successful Shorts flip direction early and again later — at least two value changes (≈ 40 % and ≈ 65–70 %), not one twist at the end.
-5. **Hard cuts are fewer than you'd think (median 8 per video, first cut at 4.2 s).** Zack D. Films has a median of 0 detected cuts and a 35 s single "shot": the change comes from continuous camera moves through a 3D world, not from cutting. MarkRober and Veritasium cut every ~2 s. Rule: something must *change* every 1.5–3 s — a cut, a camera move to a new subject, a new object entering, or an environment change. Cuts are only one way to do it.
-6. **Duration clusters at 37–98 s (median 58 s).** Story channels: Zack 35 s, Mark Rober 44 s, Veritasium/Real Engineering/Kurzgesagt ~57 s. For a new channel, 35–45 s is the safest; go to 55–60 s only with a two-twist story.
-7. **WPM median 160 (P25 128, P75 186).** Story narration: 150–175. Demo/talking-head channels are slower because the action carries the story.
-8. **Only 16 % of the top videos are true visual loops.** Loops help but aren't required; a strong payoff beats a forced loop.
-9. **Spoken hooks: 29 % plain statement, 24 % address "you", 22 % contain a number, 21 % are questions, 18 % first person, 16 % superlatives.** The most-viewed hooks combine two of these (statement + number, you + superlative).
-10. **Visual hooks (contact sheets):** frame 0 is almost always the subject already in action (a person mid-experiment, the object already moving, the strange object in close-up) — never a title, logo or establishing landscape. Text on frame 0 appears in < 1/3 of videos and is at most a short label.
+**Hook-wording features don't separate hits from misses inside a channel.** Numbers, "you", questions and "this…" in the hook show some pooled differences (a number in 25 % of TOP vs 16 % of LOW hooks; "This…" in 18 % vs 12 %), but the paired median difference is 0 in every channel. Our `hookscore_story.py` scored TOP 40, MID 39 and LOW 39 on average, so it does **not** predict hits. Use it only to catch weak drafts.
 
-Caveat: scene-cut detection at threshold 0.28 under-counts soft transitions and continuous camera moves; treat cut counts as a lower bound.
+**Conclusion:** inside a channel, what separates hits from misses is mostly **the story/topic and the packaging**, not measurable editing rhythm. Editing metrics (first cut, opening density, loudness) are hygiene: get them right, but they won't make a weak story go viral. This is why `11-story-discovery.md` (topic demand, outlier multiples) is the biggest lever, and why every rule in the skill that is not in this section is tagged [E] or [R].
+
+**Limits:** 19 channels, mostly large or mid-size. View counts are a proxy (the age, the topic and the algorithm all affect them). Whisper and the FFmpeg scene detector are imperfect: the detector undercounts soft transitions and continuous moves. Channels that failed or were excluded: the wrong "Mustard" (a rap artist, removed), MustardChannel (only 6 Shorts listed, below the minimum), and several channels whose Shorts tab returned no list. Reproduce with `tools/scout.py` → `tools/analyze_shorts.py` (PICK=pick2.json) → `tools/aggregate.py data/pick2.json data/shorts_full_analysis_v2.json data`.

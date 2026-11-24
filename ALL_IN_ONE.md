@@ -1,3 +1,8 @@
+# viral-shorts-skill v2: all files in one
+
+
+<!-- ===== SKILL.md ===== -->
+
 ---
 name: viral-story-shorts
 description: End-to-end playbook for planning, writing, designing and QA-ing high-retention story Shorts / Reels (engineering disasters, science, history) for YouTube Shorts and Instagram Reels. Use when asked to create, script, storyboard, edit, review or score vertical short-form videos, hooks, captions or posting plans.
@@ -7,7 +12,7 @@ description: End-to-end playbook for planning, writing, designing and QA-ing hig
 
 You are a short-form director, writer, editor and sound designer in one. Your output is a Short that a viewer cannot swipe away from, that is factually correct, and that looks like a premium documentary — never like AI slop or a template.
 
-This skill is built on measured data (76 top-performing Shorts from 16 channels analysed second by second — `data/`), frame-level study of Zack D. Films and Fern, peer-reviewed psychology (Loewenstein, Berger & Milkman, Heath, Kahneman, McKee, Murch), platform guidance (YouTube, Mosseri), and lessons from producing 60 Shorts and a long-form documentary for FirstEngineer.
+This skill is built on measured data (~300 Shorts from 19 channels, each channel's hits, median videos and misses analysed second by second and compared within the channel — `data/`), frame-level study of Zack D. Films and Fern, peer-reviewed psychology (Loewenstein, Berger & Milkman, Heath, Kahneman, McKee, Murch), platform guidance (YouTube, Mosseri), and lessons from producing 60 Shorts and a long-form documentary for FirstEngineer.
 
 ## Read in this order
 
@@ -23,9 +28,19 @@ This skill is built on measured data (76 top-performing Shorts from 16 channels 
 | `references/08-endings-loops-cta.md` | payoff, loops, CTA, product bridge without ad feel |
 | `references/09-research-factcheck.md` | story scoring, sources, fact-check gate |
 | `references/10-qa-checklist.md` | 100-point rubric + technical and human-eye gates |
+| `references/11-story-discovery.md` | finding stories with proven demand; 40-point viral-potential score |
+| `references/12-critic-agent.md` | independent critic that judges the rendered video |
+| `references/13-camera-direction.md` | six-layer shot spec, sealed camera moves, move by feeling, 2.5D archive parallax, time/space, finishing |
+| `tools/find_archive.py` | automatic real-archive image finder with licence + credits |
+| `tools/critic_pack.py` | evidence pack from a rendered mp4 for the critic |
+| `tools/scout.py`, `tools/analyze_shorts.py`, `tools/aggregate.py` | reproduce the dataset |
 | `data/analysis_summary.md` | the numbers: durations, cut rates, WPM, first-word timing, hooks |
 | `templates/` | the exact deliverable formats |
 | `examples/` | two fully worked Shorts |
+
+## Evidence levels
+
+Every rule in this skill is one of: **[M] measured** in `data/` (with the tier comparison), **[R] research** (published psychology/platform sources), or **[E] editorial** (house style from producing 60+ Shorts and documentaries; sensible but not proven to cause virality). Don't present [E] rules as measured success formulas.
 
 ## Non-negotiable rules
 
@@ -45,15 +60,18 @@ This skill is built on measured data (76 top-performing Shorts from 16 channels 
 
 ## Workflow (do every step, in order)
 
-1. **Pick the story** with the 25-point score (`09`). Reject < 20.
+1. **Find and pick the story** with the 40-point viral-potential score (`11`) and the 25-point story score (`09`). Reject < 28/40 or < 20/25.
 2. **Research file** with sources for every fact (`09`).
 3. **Write the payoff line, then the hook, then the turn** (`05`). Generate 10 hooks from `03`, score each with the hook score in `03`, keep the best; keep the runner-up for an A/B trial reel.
 4. **Full script** 80–120 words; read aloud with a timer; fit 35–45 s.
 5. **Beat map** on the time grid (`04`): loops L1–L4, emotion, turn, peak.
 6. **Shot list**: one spec line per shot (`04` format) using the shot vocabulary (`06`); rotate types; check for repeats.
 7. **Sound plan** per shot (`07`).
+7a. **Direct every shot** in six layers with one sealed move (`13`).
+7b. **Find real visuals** with `tools/find_archive.py` (licence + credit per file), then review every file by eye.
 8. **Title, caption, hashtags, cover frame, pinned comment** (`01`, `08`).
 9. **Score with the rubric** (`10`). < 85 → revise the weakest dimension and re-score.
+9b. **After render: independent critic** (`12`) on the `critic_pack.py` output. The producer's own score never ships a video.
 10. **Deliver** using `templates/short_plan.md` (one file per video) and `templates/batch_plan.md` (for a batch).
 11. After publishing: log the metrics (`01`) and update `data/` and the hook library every 10 videos.
 
@@ -62,8 +80,7 @@ This skill is built on measured data (76 top-performing Shorts from 16 channels 
 Produce a batch plan table first (story, emotion, hook type, length, look, structure, ending pattern) and make sure the variation rule holds, then produce N complete `short_plan.md` deliverables. Never shorten later videos in the batch: video 10 gets the same depth as video 1.
 
 
----
-<!-- references/01-platforms.md -->
+<!-- ===== references\01-platforms.md ===== -->
 
 # 01 — Platform mechanics: YouTube Shorts and Instagram Reels
 
@@ -115,9 +132,44 @@ Format facts:
 
 `viewed_vs_swiped`, `avg_pct_viewed`, `avg_view_duration`, `retention_at_3s`, `retention_at_50pct`, `loops`, `shares`, `sends_per_reach` (IG), `comments`, `subs_gained`, `profile_visits`, `waitlist_signups` (via UTM'd bio link). After every 10 videos, compare hooks, durations and emotions against these numbers and update `data/` and `references/03-hooks.md`.
 
+## Reading the retention graph [R/E]
 
----
-<!-- references/02-psychology.md -->
+(Adapted from youtube-agent-skill `retention.py`, MIT.) Export: Studio → video → Analytics → Engagement → audience-retention chart → download. Then `python tools/third_party/youtube-agent-skill/retention.py retention.csv --duration 41 --transcript words.srt`.
+
+Three different problems — fix only the biggest:
+- **Hook leak** — loss in the opening. For a Short, read it as *viewed vs swiped* plus the drop in the first 3 s. Always a script/frame-0 fix, never the edit.
+- **Cliffs** — single steep drops at a moment (topic change without signpost, a slow setup, the product bridge, a static shot). With the transcript you see the exact words spoken at the cliff; that is the actionable part.
+- **Slide** — steady bleed across the middle. That is pacing: cut, don't rewrite.
+
+If the hook is healthy and the slide is flat, the video is fine and the problem is packaging (title, first frame as thumbnail, topic).
+
+## Title lint [R/E]
+
+`python tools/third_party/youtube-agent-skill/title.py --title "..."` — desktop truncates around 60 characters and the mobile feed around 40, so the subject must sit in the first 40. Not more than two ALL-CAPS words. A number, a name or a date beats any adjective. The on-screen text in frame 0 must not repeat the title word for word: different words, same promise. Write ten titles, keep two.
+
+## Search query test (long-form and evergreen Shorts) [E]
+
+Before publishing, write the three queries a real person would type to find this story ("gimli glider", "plane ran out of fuel"). The title and the first two description lines must contain those words. The first two description lines are the only ones read (above "...more").
+
+## Audit = one fix [E]
+
+When reviewing the channel: read the last ten titles as a set (same shape = a format problem), look at first frames at feed size, score the hooks of the three latest, check upload consistency, read retention. Hand back ONE fix for this week, three specific things that already work (so they are not broken) and what NOT to change yet.
+
+
+## Third-party "Shorts statistics": check them before you trust them [M]
+
+Guides on the internet (including OpenMontage's short-form guide, which cites marketing blogs) repeat numbers like "180–200 WPM", "no static hold over 3 s", "15–30 s gets the most completion" or "3-second retention above 85 % gives 2.8× views". Most of them can't be checked. Test each one against `data/analysis_summary.md` before you use it:
+- **Narration speed**: the v2 dataset shows ~177–179 WPM in every tier (Whisper base.en), so speed doesn't separate hits from misses. 160–185 WPM is the normal range; clarity beats speed.
+- **Length**: 45–60 s is the most common band among hits in our dataset, 20–35 s is over-represented among misses, and 35–45 s shows no advantage (section 3 and 5). Choose the length the story needs, and treat "15–30 s" as a hypothesis to A/B test on your own channel.
+- **Visual change every 1–3 s**: this is plausible as *visual change* (moves, labels, rack focus), which is not the same as a *cut*. The measured median cut interval is ~5 s, and the detector misses soft transitions.
+- Useful and verifiable: platform UI safe zones. Keep text inside a centred ~900×1400 px area of 1080×1920. The bottom ~300 px (captions, buttons) and right ~100 px are covered on every platform. Instagram also covers ~210 px at the top. Upload H.264 at 8–15 Mbps; below ~5 Mbps platforms may re-compress visibly.
+
+## Sample first [E]
+
+Before you produce a batch, take ONE Short all the way to final: render, critic, fix. Lock the look, the sound bed and the caption style on that one. Building ten Shorts on an unproven look multiplies one mistake by ten.
+
+
+<!-- ===== references\02-psychology.md ===== -->
 
 # 02 — Viewer psychology for Shorts / Reels
 
@@ -226,8 +278,7 @@ People share to look smart, to warn, or to make someone feel something. Engineer
 - CTA asks for one low-friction action (follow / comment a word), never "link in bio" in YouTube descriptions if links are forbidden.
 
 
----
-<!-- references/03-hooks.md -->
+<!-- ===== references\03-hooks.md ===== -->
 
 # 03 — Hooks: taxonomy, scoring, templates
 
@@ -278,7 +329,7 @@ Never: logo, title card, black, slow fade, a narrator greeting, generic stock sk
 
 ## E. Measured hook library
 
-See `data/hooks_library.md` — first 3 seconds (spoken words), first-word time, first-cut time and view counts of 76 top Shorts. Patterns extracted from it are summarised in `data/analysis_summary.md`.
+See `data/hooks_library.md` — first 3 seconds (spoken words), first-word time, first-cut time and view counts and TOP/MID/LOW tier of 302 Shorts from 19 channels. Patterns extracted from it are summarised in `data/analysis_summary.md`.
 
 ## F. 60 fill-in templates
 
@@ -345,13 +396,37 @@ See `data/hooks_library.md` — first 3 seconds (spoken words), first-word time,
 
 Templates are starting points only; every final hook must pass section B and use the story's real concrete details.
 
+## Weakest-link hook scoring [R/E]
 
----
-<!-- references/04-second-by-second.md -->
+(Adapted from Jakeschincariol/youtube-agent-skill `hookscore.py`, MIT.) Score each hook option on five properties 0–100 — **specificity** (number, name, date; no vague adjectives), **stakes** (what is lost: lives, money, a city), **curiosity gap** (a question it raises and does not answer; "because…" in the hook closes the gap), **concreteness of the first visual** (can frame 0 *show* it?), **brevity** (story Shorts: 6–14 spoken words before the first comma-pause). Verdict = 0.6 × mean + 0.4 × weakest. A hook with four strong properties and one dead one leaks at the dead one; averaging hides that.
+
+Run `python tools/hookscore_story.py hooks.txt` on the ten options, keep the top two, test both against frame 0. **Honesty note:** the original tool, tested on 74 real hooks, separated deliberately bad hooks from real ones but barely separated a creator's hits from their own misses. `data/analysis_summary.md` reports how our version does on TOP vs LOW tiers. A low score is a reason to rewrite; a high score is not a promise.
+
+## Every hook type has a failure mode
+
+| Hook type | Fails when |
+|---|---|
+| Number / statistic | the number is vague, unverifiable, or not shown on screen |
+| Impossible result | the proof does not start within ~5 s of a Short |
+| Wrong belief / mistake | the viewer cannot check the belief in one second |
+| Contrarian flip | no evidence follows immediately → reads as contrarian for its own sake |
+| "This is…" receipt | there is no real artefact on screen (a described receipt is not a receipt) |
+| Warning / stakes | the cost is small — then the hook is a lie and trust is spent |
+| Question | it is the producer's question, not the viewer's |
+| Superlative ("the deadliest") | it does not name what it beat |
+| Clock / countdown | the clock is not true to the runtime |
+| Insider / hidden | it claims access the channel does not have |
+
+## Rules for cutting a Short out of a long video [E]
+
+A Short is not the best moment of a long video; it is a moment that **survives without the video around it**. A span qualifies only if: (1) it opens on a complete thought, (2) it contains a turn, (3) it ends on a line, not a trail-off. Then write a NEW first line (the long-form line assumes context), on-screen text for the first 2 s in *different words* from the spoken line, and a loop point (the last line sets up the first). Note what a 9:16 crop of the 16:9 frame loses.
+
+
+<!-- ===== references\04-second-by-second.md ===== -->
 
 # 04 — Second-by-second blueprint
 
-Plan every Short on a time grid before writing visuals. Times below are for a **35–45 s** story Short (the sweet spot measured in `data/`). Scale proportionally for 25 s or 60 s.
+Plan every Short on a time grid before writing visuals. Times below are for a **35–45 s** story Short. This length is an *editorial default* for a new channel (short enough to finish, long enough for two value flips), not a measured optimum — in the v2 data, 45–60 s is the most common band among hits, 20–35 s is over-represented among misses, and 35–45 s shows no edge (`data/analysis_summary.md` sections 3 and 5). Measured hygiene: first cut before ~4 s. Scale proportionally for 25 s or 60 s.
 
 ## Master grid (40 s example)
 
@@ -402,8 +477,7 @@ PURPOSE: shows the wrong number the whole story turns on
 If the PURPOSE field can't be written in one line, the shot is cut.
 
 
----
-<!-- references/05-script-writing.md -->
+<!-- ===== references\05-script-writing.md ===== -->
 
 # 05 — Script writing
 
@@ -466,8 +540,7 @@ End the video on the stressed word. Cut the audio tail at ≤ 1 s.
 Across a batch, vary at least 3 of: hook type, emotion, length, look/colour, structure (chronological / reverse / countdown / comparison / POV), narrator energy, ending pattern. Track them in the batch plan table so no two consecutive uploads share more than two.
 
 
----
-<!-- references/06-visual-language.md -->
+<!-- ===== references\06-visual-language.md ===== -->
 
 # 06 — Visual language: shots, motion, typography, evidence
 
@@ -560,8 +633,7 @@ A "shot" can be a continuous camera move: Zack D. uses 0–4 hard cuts in 30–4
 Frame 0 must be readable as a thumbnail at 30 % size on a phone.
 
 
----
-<!-- references/07-sound-design.md -->
+<!-- ===== references\07-sound-design.md ===== -->
 
 # 07 — Sound design for Shorts
 
@@ -598,8 +670,7 @@ Sound is half of retention. Many viewers start muted, but the ones who unmute de
 - With ElevenLabs v3/v4 style models, use audio tags sparingly ([whispers] for the scary line, [sighs] for the lesson).
 
 
----
-<!-- references/08-endings-loops-cta.md -->
+<!-- ===== references\08-endings-loops-cta.md ===== -->
 
 # 08 — Endings, loops, CTA and the product bridge
 
@@ -640,8 +711,7 @@ Sound is half of retention. Many viewers start muted, but the ones who unmute de
 - Measure: waitlist sign-ups per 1,000 views for bridge vs. non-bridge videos; keep the bridge rate only if bridge videos don't lose retention.
 
 
----
-<!-- references/09-research-factcheck.md -->
+<!-- ===== references\09-research-factcheck.md ===== -->
 
 # 09 — Story selection, research and fact-check
 
@@ -684,12 +754,23 @@ VISUAL ASSETS (file, licence, credit line):
 - Sensitive topics (deaths): respectful wording, no gore, no mocking victims.
 
 
----
-<!-- references/10-qa-checklist.md -->
+## Reference-video breakdown: five aspects per shot [R/E]
+
+(Structure adapted from OpenMontage's video-reference analyst and the CHAI five-aspect captioning; rewritten here.) When analysing a Short you want to learn from, use the contact sheet and the transcript to describe **every shot** in five labelled aspects. Write N/A when an aspect does not apply; leaving an aspect out silently is the most common analyst mistake.
+1. **Subject**: what or who, how many, and how it changes across shots (revealed, disappears, switches).
+2. **Subject motion**: actions in time order.
+3. **Scene**: setting, time of day, POV (aerial, macro, top-down, handheld, locked-off), and **overlays as their own layer** (text, labels, arrows, watermark).
+4. **Spatial framing**: shot size, subject position, foreground/mid/background use, and how these change.
+5. **Camera**: playback speed (real time, slow motion, time-lapse), lens, height, angle, focus/DOF, steadiness, move.
+
+Then classify the **motion type** of each shot: real footage, an animated still (pan/zoom/parallax), a 3D render, a code-drawn diagram or a static image. Never guess. The mix tells you the production method you would need to match it. End with **what makes it work** (two or three specific things) and **how ours differs**: same structure with a different story, same story from a different angle, or a different visual treatment. Never copy.
+
+
+<!-- ===== references\10-qa-checklist.md ===== -->
 
 # 10 — QA gates and scoring rubric
 
-A Short ships only when every gate passes. Score it; under 85/100 → fix and re-score.
+A Short ships only when every gate passes. Pre-render, the producer scores the plan (< 85 → fix). After render, the **independent critic** (`12-critic-agent.md`) scores the actual video; only the critic's SHIP verdict ships it.
 
 ## Scoring rubric (100)
 
@@ -729,8 +810,203 @@ Any "no" → fix before export.
 - Titles and first lines are all different in structure.
 
 
----
-<!-- templates/batch_plan.md -->
+<!-- ===== references\11-story-discovery.md ===== -->
+
+# 11 — Story discovery and viral-potential scoring
+
+Pick stories by evidence, not taste. Run this as an independent step before any writing.
+
+## 1. Sources to mine (rotate)
+
+| Source | What to pull |
+|---|---|
+| Investigation reports (NTSB, TSB, AAIB, BEA, CSB, NASA, Coast Guard, national rail/structural boards) | findings with a single concrete cause |
+| Wikipedia lists: "List of structural failures and collapses", "List of software bugs", "Engineering disasters", "Category:Industrial accidents", "List of aviation accidents by cause" | candidate pool |
+| Engineering case studies (ASCE, IEEE Spectrum "Risk Factor", Hackaday failures, Ars Technica) | modern and tech-era stories |
+| Reddit r/engineering, r/CatastrophicFailure, r/EngineeringPorn top of year | what people already share |
+| Anniversaries in the next 30 days | timely angle |
+| Comments on your own top videos ("do X next") | demand signal |
+
+## 2. Demand check (outside evidence that people want the story)
+
+For each candidate, record:
+- **YouTube search**: views of the top 5 Shorts on the topic and their age (views/day). High views/day for *other* creators on the same story = proven demand; if > 5 Shorts already exist with > 1 M views, you need a new angle.
+- **Long-form proof**: a long video on the topic with > 1 M views but few Shorts = gap.
+- **Google Trends / Wikipedia pageviews** (pageviews API) for the last 90 days — rising interest is a bonus.
+- **Novelty**: has *your* audience seen it? (search your own uploads and your top 10 competitors).
+
+## 3. Viral potential score (0–40) — use together with the 25-point story score in `09`
+
+| Factor | 0 | 5 |
+|---|---|---|
+| Proven demand (views/day of existing coverage) | none | many viral pieces |
+| Gap (few Shorts, or a new angle) | saturated | untouched angle |
+| Visual availability (real, licensed material) | none | strong photos/footage/documents |
+| One-sentence cause | complex | one word / number |
+| Emotion strength | flat | awe / anger / anxiety obvious |
+| Social currency ("send this to…") | none | obvious person to send to |
+| Timeliness | none | anniversary / in the news |
+| Audience fit (engineers, students, tech) | none | direct |
+
+Rule: produce only stories ≥ 28/40 AND ≥ 20/25.
+
+## 4. Learn from your own results
+
+After each batch, tag each video with its hook type, emotion, length, structure and story category, and compare *within your own channel* (top third vs. bottom third by viewed-vs-swiped and average % viewed). Update the weights above with what actually separated them.
+
+## Outlier multiple, not raw views [M/R]
+
+Raw views rank channel size, not ideas. Score every candidate reference video as **views ÷ its own channel's median** (≥ 4 videos per channel, preferably ≥ 30, newest ~10 excluded because their views are not settled). A 400 k Short on a channel whose median is 30 k (13×) is worth studying; a 4 M Short on a channel whose median is 3 M (1.3×) is a normal day. `tools/third_party/youtube-agent-skill/swipe.py collected.json --min 2.0` ranks a `yt-dlp --flat-playlist -J` export this way. When you present outliers: the top five with multiples, the hook formula each used (a judgement about the title, not a proven cause), the ONE structural thing they share, and which one this channel can make this week with real archive.
+
+Small/new channels matter more than giants here: a 10× outlier on a 5 k-subscriber channel shows the *topic and packaging* carried it, not the audience.
+
+
+<!-- ===== references\12-critic-agent.md ===== -->
+
+# 12 — Independent critic agent
+
+The producer's own QA score is not evidence. Every rendered video is judged by a **different model or person** that did not write it, using only the rendered file's evidence pack (`tools/critic_pack.py`): contact sheet, first-3-s frames, transcript by second, cuts, freezes, black frames, loudness.
+
+## Critic prompt (paste with pack.md + the two images)
+
+```
+You are a harsh, independent short-form video critic. You did not make this video and you gain nothing if it passes.
+You see only the evidence: frames at 2 fps, the first 3 s at 10 fps, a per-second transcript and measured metrics.
+
+1. Swipe test: describe frame 0 and the first 1.5 s. Would a viewer who has just seen 20 random Shorts stop? Why / why not?
+2. Second-by-second retention risks: list every second range where nothing new happens (same composition, no new information, no open question) and every point where a viewer could predict the rest.
+3. Hook: quote the spoken hook. Is the cause hidden? Is it concrete? Is it under 2.5 s?
+4. Visual/narration match: for every 5 s, does the image show what the words say? Name each mismatch with timestamps.
+5. Repetition: any frames that look the same or near-identical? Any decorative motion with no meaning?
+6. AI-look / template-look: anything that looks AI-generated, stock, or like a generic template (fonts, glows, gradients, emoji)?
+7. Facts: list every factual claim in the transcript; mark each "plausible / needs source / likely wrong".
+8. Payoff and ending: does it end within 1 s of the payoff word? Is the strongest moment at 85–95 %?
+9. Ad feel: does any part feel like an advert?
+10. Technical: comment on loudness (target −14…−16 LUFS, TP ≤ −1), freezes, black frames, longest shot.
+
+Return: a score 0–100 using references/10-qa-checklist.md, the 3 changes that would raise retention the most (with timestamps), and a verdict SHIP / FIX / KILL.
+Do not be polite. A 70 that is honest is worth more than a 95 that is not.
+```
+
+## Rules
+
+- The critic must be a different model, or at least a fresh session without the production conversation.
+- FIX → apply the 3 changes, re-render, re-pack, re-judge. Two FIX rounds max, then KILL or rewrite.
+- Keep every critic report next to the video; compare critic scores with real retention after 7 days to calibrate the critic (if critic scores don't predict retention, change the prompt).
+
+
+## Critique quality: Accurate, Complete, Constructive [R]
+
+(Idea adapted from OpenMontage's reviewer skill, which cites the CMU/Harvard CHAI study on video-language critique; rewritten here.) A finding names a problem; a critique tells the producer how to fix it. Every critic note must be:
+- **Accurate**: points at a timestamp, a shot number, a word in the transcript or a frame in the contact sheet. No location means a guess, so delete the note.
+- **Complete**: when you find one problem, scan the whole video for the same class of problem ("#07 repeats #03's photo" means check every pair).
+- **Constructive**: every critical note carries a concrete fix ("#11 0:23.4: the push ends 0.6 s after 'closed'; stop it on the word"). If you cannot propose a fix, label it *investigate*, not *critical*.
+
+Severity: **critical** (blocks SHIP: a factual error, a repeated asset, an unreadable label, a dead first second, clipping), **suggestion**, **nitpick**. Don't inflate severity. **Two FIX rounds maximum**, then SHIP with the remaining warnings listed or KILL. Perfectionism stops the batch.
+
+## Slideshow-risk score (0–5 per dimension, average ≥ 3 = FIX, ≥ 4 = KILL/replan) [E]
+
+| Dimension | Score high when |
+|---|---|
+| Repetition | several shots share the same layout, shot size, asset or move |
+| Decorative visuals | a shot has no stated purpose (what the viewer learns or feels) |
+| Weak motion | moves exist but none is motivated by the subject or the information |
+| Missing shot intent | no start/end frame, no hold, no cut cue in the plan |
+| Text overreliance | more than ~30 % of shots are text, stat or title cards |
+| Unearned "cinematic" | claims cinematic but has no hero shot, no light source, no held moment |
+
+
+<!-- ===== references\13-camera-direction.md ===== -->
+
+# 13 — Camera direction and shot specification
+
+Adapted and extended from AustinZ21/cinematic-skills (`shot-director`, `still-to-film`, MIT), rewritten for vertical story Shorts built from real archive + code-drawn animation + Blender. Evidence level: **[E]** craft rules from film practice, not measured on Shorts.
+
+> An adjective makes the model (or you) guess. A camera instruction says what to do. "Make it cinematic" is not a note. "Start on the gauge, push in at steady speed, stop when the needle hits zero, background never moves" is.
+
+## 1. Three questions before any shot
+
+1. **What do we look at?** The one piece of information that must land first.
+2. **Where do we stand?** Shot size, height, angle.
+3. **How do we approach?** Stay still, turn in place, travel, or shift focus.
+
+Then four checks: Why does the subject move? Why does the camera move? What does the move reveal? **Would it be better if the camera did not move at all?** A move with a story job pulls the viewer along; a move added "to look expensive" becomes the endless forward float that makes video look AI-made.
+
+## 2. Every shot is written in six layers
+
+| Layer | Answers | Words |
+|---|---|---|
+| 1 Subject + action (blocking) | who/what does what, when | the needle drops, the beam buckles, the crowd steps |
+| 2 Shot size | how much fits | extreme wide · wide · medium · close-up · extreme close-up (insert) |
+| 3 Angle + height | from where | eye level · low · high · overhead · ground level |
+| 4 Lens + focus | how space looks | wide lens · long lens · shallow DOF · deep focus · rack focus |
+| 5 Camera move | how it travels | one main move (§3) |
+| 6 Pace + limits | how it starts and ends | speed, ease, start frame → end frame, what stays still |
+
+Add to the shot list (`templates/short_plan.md`): **Start → end frame**, **Holds** (what must not change, scale reference, screen direction), **Cut cue** (the word, beat or sound the cut lands on).
+
+## 3. Move rules
+
+- **One main move per shot.** Two at most, joined by a trigger ("when the counter hits 0, the push stops and focus racks to the crack"). Everything else is a cut.
+- **Every move is sealed:** start, end, speed, what does not change. "Pan right" alone pans until the clip ends.
+- **Never mix zoom and dolly by accident.** Zoom = optical, everything scales evenly (flat). Dolly/push = camera travels, near things grow faster than far (parallax). Opposite directions together = dolly zoom (shock), only deliberately.
+- **Static first when unsure.** If composition and action don't work still, no move saves them.
+- **Not every shot moves.** Constant motion removes the reference point; a held static shot makes the next move hit harder. Budget per Short: ≥ 1 held near-static beat (usually the turn or right before the payoff).
+- **Camera moves only when the subject or the information moves, and exactly as much** (Fincher rule).
+- **Handheld is a controlled strength**, not random shake: "slight footstep bob" by default, more only on impact.
+- **Ease:** smoothstep `u*u*(3-2u)` for in/out; constant log-zoom rate feels like a steady dolly; accelerating dive `k*u^2.3`. Speed must stay continuous across cuts that are meant to flow.
+- **Motion blur on fast moves** (~6 sub-frames over ~1 frame of shutter) or the push strobes.
+
+### Look-alike pairs (write the right one)
+
+Pan (turn head) vs **truck** (step sideways: near things race past) · tilt (look up) vs **pedestal** (rise, lens level) · **zoom** vs **dolly** · handheld (breath) vs gimbal (smooth inertia) · crane (arc: height + distance + angle together) vs pedestal (straight up) · POV (whose eyes) vs FPV (flight route) · barrel roll (keeps rotating) vs Dutch angle (tilts once, holds) · long take (no cut) vs slow motion (playback speed).
+
+## 4. Choose the move by the feeling or the job
+
+| Feeling / job in a disaster Short | First choice | Watch out |
+|---|---|---|
+| Objective record, evidence, a document | static or very slow push | text must be readable for ≥ 1.2 s at rest |
+| Realisation ("they knew") | slow push in, stop on the key line | stop exactly on the stressed word |
+| Danger off-screen / still to come | slow pan or tilt toward it | write what is hidden first, where it stops |
+| A detail suddenly matters (crack, bolt, gauge) | rack focus or fast push | settle instantly |
+| Shock / sudden failure | crash zoom, whip pan, impact shake | one per Short; clear start/end |
+| Scale, size, power (bridge, dam, ship) | tilt up / pedestal up / pull back | must contain a scale ruler (person, car, bus) |
+| Loneliness, aftermath, loss | slow pull out | end frame shows the empty space around |
+| Mechanism in 3D (how it failed) | small orbit (≤ 90°) around the part | one axis; label stays readable |
+| Journey / timeline progress | truck along a timeline or a map | one screen direction for the whole sequence |
+| Falling / losing control | barrel roll (small = unease, large = fall) | once |
+| Panic closing in | dolly zoom | centred subject, deep background (corridor, girders) |
+
+Fastest path: performance/evidence strong on its own → **static**; something changes inside a person → **push in**; the surroundings change the meaning → **pull out**; new info is off-frame → **pan/tilt**; new info is in frame at another depth → **rack focus**; crossing space → **truck/track**; need 3D form → **orbit**; just bigger → **zoom**.
+
+## 5. Real archive photos with real camera moves (2.5D depth parallax)
+
+A real photo that is only zoomed reads as a slideshow (Ken Burns). Give it depth instead:
+1. Make a depth map of the photo (`tools/third_party/cinematic-skills/prep_plate.py`, Depth Anything V2). **Do not use its AI super-resolution step on archive evidence** — it invents detail; upscale with Lanczos. The depth map changes only geometry, not content; still label the shot `ARCHIVE · <source>`.
+2. Render with `depthshot.js` (or the same maths in Blender: photo on a displaced plane). Push = zoom `lz` + depth magnification `pz` (the `pz` is what sells "the camera moved"). Truck/pedestal = `px/py` ≤ ±0.05. Pan/tilt beyond ~10 % of the frame or orbit beyond a few degrees: impossible from one still — cut instead.
+3. Failure modes: near edges tear into "melted glass" (reduce px/pz, dilate depth); thin flat things (signs, glass, water from above, documents) get false relief → `pz: 0`; cables crossing depth edges kink; plate borders show at move extremes → check first/last frame.
+4. **Something moves inside every frame**, not only the camera: dust/particles in light, water, smoke, a blinking indicator, a counter, a highlight wiping a line.
+
+Decision: depth shot if the move stays within the picture (push/pull/small truck). Blender if something must enter, turn, or be seen from another side. Code-drawn 2D if the shot is a diagram, number or map.
+
+## 6. Time and space (sequence level)
+
+- **Scale needs a ruler.** Every wide shot of something huge has a known-size object in it.
+- **Geography before action.** One layout shot (map, plan, cutaway) before the failure, so the viewer knows where the threat and the safety are.
+- **Hold the line.** A moving thing keeps one screen direction per sequence (e.g. the plane always flies toward frame right until it falls).
+- **Stage in depth.** Foreground, subject and background layers let one moving shot replace three cuts.
+- **Shrink shot length toward the climax**, then **hold one beat longer than comfortable before the reveal**. Speed is only felt against stillness.
+- **One near-silent held moment** before the biggest beat (the turn-point silence in `07-sound-design.md`).
+- **Match cuts** jump time or place by shape, motion or sound (rivet to bolt, ripple to sound wave, crack in the model to crack in the archive photo).
+- **Let sound do the cutting:** cut on a sound, bridge into the next scene with sound, drop to silence before impact.
+- **Moves in time:** slow motion at most once per Short; speed ramp for impact; time-lapse to compress years; reverse to show how it should have been; freeze on the frame of failure while the camera keeps moving.
+- **Light has a source** the viewer could point to (window, screen, sun, fire). One strong source and deep shadow beats "cinematic lighting".
+- **Colour carries point of view:** one grade for the record/evidence (neutral, slightly cool), another for reconstruction (warmer, grain), used consistently.
+- **Withhold, then reveal:** start on the detail before the context, or the reaction before the cause.
+- **Every shot changes what the viewer knows or feels.** If not, it is decoration: cut it.
+
+
+<!-- ===== templates\batch_plan.md ===== -->
 
 # BATCH PLAN — <batch name> (<N> videos)
 
@@ -745,8 +1021,7 @@ Variation checks:
 - Every story score ≥ 20/25.
 
 
----
-<!-- templates/short_plan.md -->
+<!-- ===== templates\short_plan.md ===== -->
 
 # SHORT PLAN — <NN> <working title>
 
@@ -817,8 +1092,7 @@ Music cue: … (mood, BPM, where it drops) · Ambience: … · Silence beat at _
 Total: __ /100 (ship ≥ 85)
 
 
----
-<!-- examples/example_gimli_glider.md -->
+<!-- ===== examples\example_gimli_glider.md ===== -->
 
 # Worked example — "The Gimli Glider" (40 s, awe + anxiety, hook type 1 In medias res, look: night cockpit → daylight)
 
@@ -846,23 +1120,32 @@ Facts (TSB Canada / Wikipedia map): Air Canada 143, 23 July 1983, Boeing 767; fu
 ## Beat map
 L1 (0 s): why did the engines stop? → closes 12.6 s. L2 (14.8 s): where can a glider land? → 25 s. L3 (27.4 s): racetrack full of families → 38 s. Turn at 22.6 s (57 %). Peak visual at 33–38 s (88–95 %).
 
-## Shot list (excerpt)
+## Shot list (complete — 16 shots, median 2.4 s)
 ```
-#01 0.0–1.4  VO "At forty-one thousand feet"  VISUAL reconstruction: cockpit at night, two engine N1 gauges spinning down (RECONSTRUCTION)  MOVE fast push to gauges  SFX engine spool-down + master caution  PURPOSE: the impossible moment
-#02 1.4–2.4  VO "both engines went silent"  VISUAL real 767 photo, engines, slow drift  SFX wind only (engine noise cut)  PURPOSE: silence = danger
-#05 7.6–10.2 VO "less than half"  VISUAL fuel bar draws to 100 %, then drains to 45 % (data counter)  TEXT "22,300 kg needed / 10,100 kg on board"  SFX tick ×4, sub hit on "half"  PURPOSE: the core number
-#06 10.2–12.6 VO "in pounds"  VISUAL real refuelling form (source label), push to "1.77" conversion factor, marker wipe  SFX paper + pen  PURPOSE: the cause, as evidence
-#10 22.6–24.0 VO "You see,"  VISUAL 0.8 s black + map snaps in  SFX music drop, silence, single low tone  PURPOSE: the turn
-#12 27.4–30.4 VO "it was now a racetrack"  VISUAL aerial of Gimli strip with drag-race cars (archive), pull-back  SFX crowd + engines rev  PURPOSE: the twist
-#14 33.0–38.0 VO landing  VISUAL archive photo of the 767 nose-down on the strip, push-in; then people standing next to it  SFX tyre screech, metal scrape, biggest impact  PURPOSE: peak + scale
+#01 0.0–1.4  VO "At forty-one thousand feet,"  STRESS "forty-one"  VISUAL RECONSTRUCTION: FIRSTENGINEER — 767 cockpit at night, both N1 gauges spinning down  MOVE fast push 100→118 % to gauges  TEXT none  SFX engine spool-down + master caution chime at 0.0  LOOP L1 opens  PURPOSE: the impossible moment, in action at frame 0
+#02 1.4–2.4  VO "both engines went silent."  STRESS "silent"  VISUAL real photo C-GAUN 767 (SOURCE: Wikimedia Commons, CC BY-SA, credit on screen)  MOVE slow drift left  TEXT "AIR CANADA 143 · 23 JUL 1983" mono, small  SFX engine noise hard-cut to wind  LOOP L1  PURPOSE: real aircraft + silence = danger
+#03 2.4–5.0  VO "The screens went black. Sixty-nine people on board."  STRESS "black", "sixty-nine"  VISUAL RECONSTRUCTION cockpit EFIS screens blinking off one by one, then cabin wide  MOVE pull back through cockpit door into cabin  TEXT "69 ON BOARD"  SFX relay clicks ×3, low hum dies  LOOP L1  PURPOSE: stakes (people)
+#04 5.0–7.6  VO "The fuel gauges had said they had plenty."  STRESS "plenty"  VISUAL code-drawn fuel bar fills to 100 % on a 767 silhouette  MOVE tilt down from silhouette to bar  TEXT "FUEL: OK"  SFX soft fill tone  LOOP L1  PURPOSE: the false belief
+#05 7.6–10.2 VO "They didn't. They had less than half."  STRESS "half"  VISUAL same bar drains to 45 %, red  MOVE micro shake on "didn't"  TEXT "22,300 kg needed / 10,100 kg on board" (SOURCE: Board of Inquiry)  SFX tick ×4, sub hit on "half"  LOOP L1 narrows  PURPOSE: the core number
+#06 10.2–12.6 VO "Someone had done the maths in pounds."  STRESS "pounds"  VISUAL real refuelling-sheet scan / Board of Inquiry page (SOURCE label), push to 1.77 conversion factor, marker wipe  MOVE push-in 100→140 %  TEXT "1.77 lb/L" highlighted  SFX paper slide + pen  LOOP L1 closes partly  PURPOSE: the cause as evidence
+#07 12.6–14.8 VO "The new jet used kilograms."  STRESS "kilograms"  VISUAL split: "lb" crossed out, "kg" in its place (code-drawn on paper texture)  MOVE whip-pan between halves on the stressed word  TEXT "lb ≠ kg"  SFX whoosh + stamp  LOOP L1 closed  PURPOSE: makes the mistake understandable in 1 s
+#08 14.8–17.6 VO "Now a 132-tonne airliner was a glider."  STRESS "glider"  VISUAL RECONSTRUCTION side view of the 767 gliding over cloud tops at dusk, altitude counter falling  MOVE tracking alongside, slow  TEXT altitude counter 35,000→28,000 ft  SFX wind rising  LOOP L2 opens  PURPOSE: new situation
+#09 17.6–19.8 VO "The nearest runway was too far."  STRESS "too far"  VISUAL code-drawn map Manitoba: Winnipeg circle, glide-range ring that falls short  MOVE map zoom out  TEXT "WINNIPEG · 65 NM" (⚠ verify)  SFX map tick, tension pulse  LOOP L2  PURPOSE: shows why the obvious answer fails
+#10 19.8–22.6 VO "But the captain flew gliders on weekends."  STRESS "gliders"  VISUAL real archive photo of Capt. Bob Pearson (SOURCE label) or, if unlicensed, glider photo + name card  MOVE slow push to face  TEXT "CAPT. ROBERT PEARSON"  SFX music lifts one step  LOOP L2  PURPOSE: the human edge (first value flip at ~50 %)
+#11 22.6–24.0 VO "You see, there was one more runway."  STRESS "one more"  VISUAL 0.8 s black, then map snaps to Gimli  MOVE none during black, then snap zoom  TEXT "GIMLI" mono  SFX music drop → silence → single low tone  LOOP L3 opens  PURPOSE: the turn
+#12 24.0–27.4 VO "An old air force base. Closed."  STRESS "closed"  VISUAL real archive aerial of RCAF Station Gimli (SOURCE label)  MOVE slow drift down  TEXT "RCAF GIMLI · CLOSED 1971"  SFX distant wind  LOOP L3  PURPOSE: hope with a doubt
+#13 27.4–30.4 VO "What nobody on board knew: it was now a racetrack."  STRESS "racetrack"  VISUAL archive drag-racing photo at Gimli Motorsport Park (SOURCE label)  MOVE pull back to reveal strip  TEXT none  SFX car engines rev, crowd  LOOP L4 opens  PURPOSE: the twist
+#14 30.4–33.0 VO "And that day, it was full of families."  STRESS "families"  VISUAL archive / reconstruction: campers and families on the strip, view from the approaching jet  MOVE descending POV, accelerating  SFX crowd + rising whine of air over the fuselage  LOOP L4  PURPOSE: maximum anxiety
+#15 33.0–36.2 VO "He side-slipped the jet to lose height, hit the runway hard, the nose gear collapsed —"  STRESS "hard", "collapsed"  VISUAL RECONSTRUCTION side-slip from behind, then touchdown low angle  MOVE handheld follow, shake on impact  SFX tyre screech, metal scrape (biggest hit, 88–92 %)  LOOP L4  PURPOSE: peak
+#16 36.2–38.6 VO "and it stopped just before the crowd."  STRESS "crowd"  VISUAL real photo of the 767 nose-down on the Gimli strip with people around it (SOURCE label)  MOVE slow push-in, stop on last word  SFX scrape stops → silence → crowd murmur tail 0.8 s  LOOP L1–L4 closed  PURPOSE: payoff + scale
 ```
+Checks: 16 shots · median 2.6 s · longest 3.4 s · no repeated asset · shot types used: reconstruction, archive photo, document, diagram/data, map, portrait, black beat.
 
 ## Packaging
 Title: "The Jet That Ran Out of Fuel at 41,000 Feet" · IG first line: "Both engines stopped. The only runway was a racetrack." · Pinned comment: source (TSB report) + "The jet flew again for 25 more years."
 
 
----
-<!-- examples/example_millennium_bridge.md -->
+<!-- ===== examples\example_millennium_bridge.md ===== -->
 
 # Worked example — "London's Wobbly Bridge" (28 s loop, surprise + awe, hook type 2 Impossible result, look: cold steel)
 
@@ -883,122 +1166,141 @@ Facts: Millennium Bridge, London, opened 10 June 2000; synchronous lateral excit
 ```
 Loop: last frame = same wide shot as frame 0 (now still) → first line "started dancing" plays over the still bridge, creating a seamless loop.
 
-Shot plan highlights: #01 real archive of the crowded bridge with lateral wobble (stabilised + speed ramp); #04 diagram: one pedestrian's centre of mass swinging, then 1,000 dots syncing (small multiples); #07 photo of the dampers (source label); #09 pull-back scale reveal over the Thames.
+## Shot list (complete — 12 shots)
+```
+#01 0.0–2.6  VO "Two days after it opened, this bridge started dancing."  VISUAL real archive footage/photo of the crowded bridge 10 Jun 2000 (SOURCE label)  MOVE handheld push, lateral sway emphasised  SFX crowd + steel creak  PURPOSE: impossible result at frame 0
+#02 2.6–4.0  VO "Thousands of people walked across it."  VISUAL wide of the deck crowd from bankside  MOVE slow pan  TEXT "10 JUNE 2000"  SFX footsteps bed
+#03 4.0–5.4  VO "It swayed sideways."  VISUAL code-drawn top view, deck outline oscillating ±7 cm (⚠ verify amplitude)  MOVE locked  TEXT "SIDEWAYS ↔"  SFX low pulse each swing
+#04 5.4–8.4  VO "And the more it swayed, the more they swayed with it."  VISUAL one pedestrian figure, centre of mass swinging with the deck  MOVE push in  SFX pulse speeds up
+#05 8.4–10.2 VO "You see, when a floor moves,"  VISUAL 0.6 s black → close-up feet on a moving deck (diagram)  SFX music drops out
+#06 10.2–12.0 VO "you widen your step to keep balance."  VISUAL feet diagram, step width arrows  SFX single footstep
+#07 12.0–14.8 VO "Thousands of steps fell into the same rhythm."  VISUAL 1,000 dots start random, lock into phase (small multiples)  SFX scattered steps → unison stomp
+#08 14.8–17.4 VO "Their feet were pushing the bridge in time."  VISUAL force arrows from dots onto deck, amplitude graph growing  SFX bass swell (peak builds)
+#09 17.4–19.6 VO "London closed it after two days."  VISUAL archive newspaper headline (SOURCE label), paper slides in on desk  SFX paper + stamp
+#10 19.6–23.0 VO "It took two years and 91 shock absorbers to fix."  VISUAL real photo of the viscous dampers under the deck (SOURCE label), counter 0→91  SFX hydraulic hiss ×3
+#11 23.0–25.4 VO "Today, thousands cross it every day."  VISUAL present-day photo, St Paul's behind  MOVE pull-back scale reveal over the Thames (peak visual)  SFX city ambience
+#12 25.4–28.0 VO "And it doesn't dance anymore."  VISUAL same framing as #01, bridge still  MOVE matches #01 start position → loops  SFX tail blends into #01 creak
+```
 
 
----
-<!-- data/analysis_summary.md -->
+<!-- ===== data/analysis_summary.md ===== -->
 
-# Measured analysis — 76 top story Shorts, 16 channels
+# Measured analysis — 302 Shorts, 19 channels, tiered within channel
 
-Method: each Short downloaded (480p), transcribed with Whisper word timestamps, scene cuts with FFmpeg `scene>0.28`, momentary loudness (EBU R128) per second, contact sheets at 2 fps, first-vs-last frame difference (loop). Script: `tools/analyze_shorts.py`. Selection: the 5 most-viewed Shorts of each channel.
+Sample: for each channel, from its latest ~150 Shorts (newest 10 dropped because their views are not settled), the 6 most-viewed (TOP), 5 around the median (MID) and 5 least-viewed (LOW). Comparing tiers *inside the same channel* controls for channel size and audience; it shows what separates a channel's hits from its misses, not what makes a channel big.
 
-## 1. Global distributions
+## 1. Tier comparison (median of each metric)
 
-| Metric | Median | P25 | P75 | Min | Max |
-|---|---|---|---|---|---|
-| Duration (s) | 58.45 | 37.3 | 98.0 | 6.9 | 179.4 |
-| Cuts per video | 8.0 | 3 | 23 | 0 | 104 |
-| Median shot (s) | 4.99 | 2.4 | 8.3 | 0.13 | 40.87 |
-| First cut (s) | 4.21 | 2.04 | 6.64 | 0.03 | 32.21 |
-| Words per minute | 159.5 | 128 | 186 | 0 | 275 |
-| First word (s) | 0.0 | 0.0 | 0.0 | 0.0 | 12.06 |
-| Integrated loudness (LUFS) | -15.7 | -19.3 | -12.7 | -25.8 | -8.2 |
-| First/last frame diff (0–255) | 53.5 | 41.5 | 68.3 | 4.1 | 153.0 |
-| Cuts per second | 0.13 | 0.07 | 0.29 | 0.0 | 1.74 |
-
-## 2. Per channel (medians)
-
-| Channel | n | Views med | Dur | Cuts | Med shot | First word | WPM | LUFS |
-|---|---|---|---|---|---|---|---|---|
-| MarkRober | 5 | 638,000,000 | 44.5 | 22 | 1.83 | 0.0 | 111 | -12.5 |
-| NileRed | 5 | 127,000,000 | 55.5 | 6 | 6.77 | 0.0 | 128 | -17.8 |
-| veritasium | 5 | 53,000,000 | 58.1 | 18 | 2.4 | 0.0 | 141 | -18.0 |
-| zackdfilms | 5 | 22,000,000 | 35.3 | 0 | 35.19 | 0.0 | 177 | -10.3 |
-| RealEngineering | 5 | 15,000,000 | 58.0 | 10 | 3.92 | 0.0 | 159 | -20.1 |
-| Kurzgesagt | 5 | 11,000,000 | 57.4 | 7 | 6.5 | 0.0 | 197 | -14.2 |
-| MrBallen | 5 | 4,300,000 | 167.7 | 31 | 4.63 | 0.0 | 243 | -11.6 |
-| DailyDoseOfInternet | 5 | 3,500,000 | 15.8 | 1 | 8.23 | 0.0 | 22 | -19.3 |
-| TheInfographicsShow | 1 | 3,000,000 | 29.0 | 3 | 6.06 | 0.92 | 159 | -13.7 |
-| HistoryLegends | 5 | 2,700,000 | 54.1 | 4 | 10.91 | 0.0 | 157 | -11.3 |
-| PracticalEngineeringChannel | 5 | 971,000 | 59.6 | 3 | 7.46 | 0.0 | 177 | -18.9 |
-| simplehistory | 5 | 841,000 | 141.3 | 11 | 9.85 | 0.0 | 159 | -14.1 |
-| bigthink | 5 | 820,000 | 178.9 | 51 | 2.54 | 0.0 | 150 | -20.9 |
-| TheB1M | 5 | 671,000 | 65.0 | 21 | 2.55 | 0.0 | 174 | -20.1 |
-| EmergencyAwesome | 5 | 182,000 | 59.7 | 41 | 0.2 | 0.0 | 181 | -19.0 |
-| Mustard | 5 | 12,000 | 22.7 | 5 | 1.84 | 0.0 | 40 | -13.7 |
-
-## 3. Full-runtime profile (normalised to 10 % bins of each video)
-
-Cut rate = cuts per second inside the bin; word rate = words per second; loudness = mean momentary LUFS relative to that video's mean.
-
-| Runtime bin | Cut rate | Word rate | Loudness Δ dB | Silence share (>1 s gaps) |
+| Metric | TOP | MID | LOW | TOP vs LOW |
 |---|---|---|---|---|
-| 0–10 % | 0.11 | 3.11 | 1.4 | 22 % |
-| 10–20 % | 0.17 | 2.81 | 0.7 | 20 % |
-| 20–30 % | 0.12 | 2.8 | 0.7 | 13 % |
-| 30–40 % | 0.17 | 2.92 | 0.2 | 17 % |
-| 40–50 % | 0.11 | 2.72 | 0.7 | 12 % |
-| 50–60 % | 0.14 | 2.9 | 1.2 | 11 % |
-| 60–70 % | 0.11 | 2.77 | 0.8 | 12 % |
-| 70–80 % | 0.11 | 2.6 | -0.3 | 14 % |
-| 80–90 % | 0.09 | 2.73 | -0.3 | 13 % |
-| 90–100 % | 0.09 | 2.21 | -1.3 | 5 % |
+| dur | 57.9 | 59.6 | 53.3 | ≈ same |
+| cuts_per_10s | 1.38 | 1.24 | 1.22 | higher |
+| med_shot | 4.67 | 5.34 | 4.37 | ≈ same |
+| first_cut | 4.27 | 4.79 | 5.0 | lower |
+| first_word | 0.0 | 0.0 | 0.0 | ≈ same |
+| wpm | 177.0 | 179 | 179 | ≈ same |
+| lufs | -15.15 | -17.1 | -16.0 | higher |
+| loopdiff | 57.95 | 54.2 | 55.2 | ≈ same |
+| hook_words | 10.0 | 10 | 10 | ≈ same |
+| hook_number | 25 % | 26 % | 16 % | higher |
+| hook_you | 26 % | 19 % | 24 % | ≈ same |
+| hook_question | 21 % | 20 % | 23 % | ≈ same |
+| hook_this | 18 % | 7 % | 12 % | higher |
+| hook_I | 14 % | 16 % | 19 % | lower |
+| but_pos | 44.74 | 44.19 | 44.03 | ≈ same |
+| silence_gaps | 0.0 | 0 | 0 | ≈ same |
+| end_word_rate | 2.64 | 2.78 | 2.65 | ≈ same |
+| start_word_rate | 3.34 | 3.14 | 3.1 | ≈ same |
 
-## 4. First 5 seconds, second by second (share of videos)
+## 2. Within-channel paired difference (TOP median − LOW median per channel; share of channels where TOP > LOW)
 
-| Second | has a cut | has speech |
-|---|---|---|
-| 0–1 s | 8 % | 97 % |
-| 1–2 s | 17 % | 92 % |
-| 2–3 s | 16 % | 84 % |
-| 3–4 s | 17 % | 88 % |
-| 4–5 s | 22 % | 82 % |
+| Metric | Channels | Median diff | TOP > LOW in |
+|---|---|---|---|
+| dur | 19 | 1.25 | 11/19 |
+| cuts_per_10s | 19 | -0.13 | 7/19 |
+| med_shot | 19 | 0.62 | 12/19 |
+| first_cut | 19 | -1.54 | 4/19 |
+| first_word | 19 | 0.0 | 0/19 |
+| wpm | 19 | 3.5 | 13/19 |
+| lufs | 19 | 0.75 | 13/19 |
+| loopdiff | 19 | -9.5 | 9/19 |
+| hook_words | 19 | 1 | 11/19 |
+| hook_number | 19 | 0.0 | 3/19 |
+| hook_you | 19 | 0.0 | 4/19 |
+| hook_question | 19 | 0.0 | 3/19 |
+| hook_this | 19 | 0.0 | 5/19 |
+| hook_I | 19 | 0.0 | 1/19 |
+| but_pos | 19 | -2.66 | 9/19 |
+| silence_gaps | 19 | 0.0 | 5/19 |
+| end_word_rate | 19 | 0.11 | 10/19 |
+| start_word_rate | 19 | 0.23 | 14/19 |
 
-## 5. Where the turn happens
+## 3. Duration distribution (all tiers)
 
-Position (as % of runtime) of the first occurrence after 25 % of runtime of each turn marker.
+| Duration | TOP | MID | LOW |
+|---|---|---|---|
+| 0–20 s | 1 | 0 | 0 |
+| 20–35 s | 6 | 6 | 14 |
+| 35–45 s | 16 | 12 | 17 |
+| 45–60 s | 55 | 39 | 34 |
+| 60–90 s | 8 | 15 | 22 |
+| 90–181 s | 26 | 23 | 8 |
 
-| Marker | Videos using it | Median position |
-|---|---|---|
-| but | 47 | 40 % |
-| you see | 1 | 71 % |
-| turns out | 1 | 93 % |
-| however | 4 | 53 % |
-| instead | 1 | 31 % |
-| actually | 21 | 45 % |
-| until | 6 | 71 % |
-| that's when | 0 |  % |
-| so | 36 | 48 % |
-| then | 29 | 62 % |
+## 4. Per channel
 
-## 6. Spoken-hook features (first 3 s)
+| Channel | Shorts listed | Channel median views | n analysed | TOP med views | LOW med views |
+|---|---|---|---|---|---|
+| EngineeringExplained | 61 | 2,300,000 | 16 | 23,000,000 | 196,000 |
+| HistoryLegends | 150 | 211,500 | 16 | 3,900,000 | 14,000 |
+| MagnatesMedia | 29 | 68,000 | 16 | 242,500 | 24,000 |
+| MarkRober | 127 | 59,000,000 | 16 | 629,000,000 | 3,200,000 |
+| MentourPilot | 80 | 495,500 | 16 | 3,550,000 | 39,000 |
+| MrBallen | 150 | 388,500 | 16 | 4,600,000 | 54,000 |
+| NEOexplains | 15 | 3,700,000 | 15 | 11,000,000 | 1,100,000 |
+| NileRed | 138 | 16,000,000 | 16 | 154,000,000 | 2,500,000 |
+| PlainlyDifficult | 15 | 41,000 | 15 | 85,000 | 18,000 |
+| PracticalEngineeringChannel | 17 | 560,000 | 16 | 901,000 | 193,000 |
+| RealEngineering | 79 | 453,000 | 16 | 12,500,000 | 74,000 |
+| Sideprojects | 150 | 24,500 | 16 | 3,850,000 | 5,700 |
+| TheB1M | 150 | 104,000 | 16 | 907,000 | 21,000 |
+| TheInfographicsShow | 150 | 572,500 | 16 | 6,100,000 | 78,000 |
+| bigthink | 150 | 33,500 | 16 | 804,500 | 11,000 |
+| kurzgesagt | 135 | 2,900,000 | 16 | 14,000,000 | 681,000 |
+| simplehistory | 150 | 37,500 | 16 | 1,250,000 | 9,100 |
+| veritasium | 89 | 6,000,000 | 16 | 52,500,000 | 965,000 |
+| zackdfilms | 150 | 8,950,000 | 16 | 26,000,000 | 2,600,000 |
 
-| Feature | Share |
+## 5. What the tier comparison says (read this before using any number)
+
+Measured on 302 Shorts (113 TOP, 95 MID, 93 LOW) from 19 channels. A "difference" only counts here if it shows up both in the pooled medians and inside most channels.
+
+**Consistent but small differences [M]:**
+- **The first cut comes earlier in hits.** TOP median 4.3 s vs LOW 5.0 s; TOP was earlier in 15 of 19 channels (median −1.5 s). This is the most consistent signal in the data: change the picture before ~4 s.
+- **The opening is denser.** Words per second in the first 10 % were higher in TOP in 14 of 19 channels.
+- **Hits are mixed slightly louder.** −15.2 vs −16.0 LUFS; louder in 13 of 19 channels. Master to about −14 to −15 LUFS and don't ship quiet.
+- **Length:** 45–60 s is the most common TOP band (55 of 113). LOW has more 20–35 s videos (14 vs 6) and more 60–90 s videos (22 vs 8). 35–45 s is **not** better than other bands (16 TOP vs 17 LOW). Long story Shorts of 90 s or more appear more often in TOP (26 vs 8) but mostly on established channels.
+
+**No meaningful difference [M]:** hook length (10 words), first word at 0.0 s (everyone does it, so it is table stakes, not an edge), narration speed (about 177–179 WPM in every tier; this run used Whisper base.en, while the v1 top-only run measured 159 with small.en, so compare speeds only within the same model), the position of the first "but" (~44 %), the loop difference and silence gaps.
+
+**Hook-wording features don't separate hits from misses inside a channel.** Numbers, "you", questions and "this…" in the hook show some pooled differences (a number in 25 % of TOP vs 16 % of LOW hooks; "This…" in 18 % vs 12 %), but the paired median difference is 0 in every channel. Our `hookscore_story.py` scored TOP 40, MID 39 and LOW 39 on average, so it does **not** predict hits. Use it only to catch weak drafts.
+
+**Conclusion:** inside a channel, what separates hits from misses is mostly **the story/topic and the packaging**, not measurable editing rhythm. Editing metrics (first cut, opening density, loudness) are hygiene: get them right, but they won't make a weak story go viral. This is why `11-story-discovery.md` (topic demand, outlier multiples) is the biggest lever, and why every rule in the skill that is not in this section is tagged [E] or [R].
+
+**Limits:** 19 channels, mostly large or mid-size. View counts are a proxy (the age, the topic and the algorithm all affect them). Whisper and the FFmpeg scene detector are imperfect: the detector undercounts soft transitions and continuous moves. Channels that failed or were excluded: the wrong "Mustard" (a rap artist, removed), MustardChannel (only 6 Shorts listed, below the minimum), and several channels whose Shorts tab returned no list. Reproduce with `tools/scout.py` → `tools/analyze_shorts.py` (PICK=pick2.json) → `tools/aggregate.py data/pick2.json data/shorts_full_analysis_v2.json data`.
+
+
+<!-- ===== data/README.md ===== -->
+
+# data/
+
+| File | What |
 |---|---|
-| statement | 29 % |
-| you | 24 % |
-| number | 22 % |
-| question | 21 % |
-| first person | 18 % |
-| superlative | 16 % |
-| this/demonstrative | 9 % |
+| `pick2.json` | v2 sample: per channel, the 6 most-viewed, 5 median and 5 least-viewed Shorts from the latest ~150 (newest 10 dropped). It holds the video id, title, views, tier, the channel median and the number of Shorts listed. |
+| `shorts_full_analysis_v2.json` | per-video measurements: duration, word timestamps (Whisper base.en), FFmpeg scene cuts (threshold 0.28), median shot, first cut, WPM, first word, 0–3 s hook, integrated and per-second LUFS, first/last frame difference |
+| `analysis_summary.md` | tier comparison, within-channel paired differences, duration bins, per-channel table, interpretation and limits |
+| `hooks_library.md` | the 0–3 s spoken hook of every analysed Short with its tier |
+| `analysis_v1_76_top_only.md`, `shorts_full_analysis.json` | the first (v1) run: top 5 per channel only, survivorship-biased, kept for transparency |
 
-## 7. Loops
+The videos themselves are not redistributed (copyright). Re-download them by id with `tools/scout.py` (yt-dlp, 360p).
 
-12 of 76 videos end on a frame within 25/255 of their first frame (visual loop).
-
-## 8. What the numbers mean (rules derived for the skill)
-
-1. **Speech starts at 0.0 s in the median video and in 97 % of videos within the first second.** A silent or music-only opening is an outlier among top Shorts → rule: first word ≤ 0.3 s.
-2. **Word rate is highest in the first 10 % (3.1 words/s ≈ 187 wpm) and lowest in the last 10 % (2.2 words/s).** Top Shorts open fast and land slower: the payoff gets air. Plan the hook at ~180 wpm and the payoff line slower, with a ≤ 1 s tail.
-3. **Loudness is +1.4 dB above the video's mean in the first 10 % and −1.3 dB in the last 10 %.** Start with a hit; don't end on the loudest moment unless it is the payoff impact.
-4. **The first "but" after the set-up arrives at a median 40 % of runtime; "then" at 62 %; "until" at 71 %.** Successful Shorts flip direction early and again later — at least two value changes (≈ 40 % and ≈ 65–70 %), not one twist at the end.
-5. **Hard cuts are fewer than you'd think (median 8 per video, first cut at 4.2 s).** Zack D. Films has a median of 0 detected cuts and a 35 s single "shot": the change comes from continuous camera moves through a 3D world, not from cutting. MarkRober and Veritasium cut every ~2 s. Rule: something must *change* every 1.5–3 s — a cut, a camera move to a new subject, a new object entering, or an environment change. Cuts are only one way to do it.
-6. **Duration clusters at 37–98 s (median 58 s).** Story channels: Zack 35 s, Mark Rober 44 s, Veritasium/Real Engineering/Kurzgesagt ~57 s. For a new channel, 35–45 s is the safest; go to 55–60 s only with a two-twist story.
-7. **WPM median 160 (P25 128, P75 186).** Story narration: 150–175. Demo/talking-head channels are slower because the action carries the story.
-8. **Only 16 % of the top videos are true visual loops.** Loops help but aren't required; a strong payoff beats a forced loop.
-9. **Spoken hooks: 29 % plain statement, 24 % address "you", 22 % contain a number, 21 % are questions, 18 % first person, 16 % superlatives.** The most-viewed hooks combine two of these (statement + number, you + superlative).
-10. **Visual hooks (contact sheets):** frame 0 is almost always the subject already in action (a person mid-experiment, the object already moving, the strange object in close-up) — never a title, logo or establishing landscape. Text on frame 0 appears in < 1/3 of videos and is at most a short label.
-
-Caveat: scene-cut detection at threshold 0.28 under-counts soft transitions and continuous camera moves; treat cut counts as a lower bound.
+**Channel identity check:** before analysing a channel, confirm that the handle resolves to the intended creator (look at the channel title and three video titles). The v1 run used `@Mustard`, which is a rap artist and not the aviation documentary channel; those rows are excluded from v2.

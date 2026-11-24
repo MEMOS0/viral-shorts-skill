@@ -75,8 +75,8 @@ When reviewing the channel: read the last ten titles as a set (same shape = a fo
 ## Third-party "Shorts statistics": check them before you trust them [M]
 
 Guides on the internet (including OpenMontage's short-form guide, which cites marketing blogs) repeat numbers like "180–200 WPM", "no static hold over 3 s", "15–30 s gets the most completion" or "3-second retention above 85 % gives 2.8× views". Most of them can't be checked. Test each one against `data/analysis_summary.md` before you use it:
-- **Narration speed**: our successful story Shorts have a median of ~160 WPM, not 180–200. Clarity beats speed for story content.
-- **Length**: our dataset spreads from 20 s to over 90 s across all tiers (section 3). No single length band is proven best. Choose the length the story needs, and treat "15–30 s" as a hypothesis to A/B test on your own channel.
+- **Narration speed**: the v2 dataset shows ~177–179 WPM in every tier (Whisper base.en), so speed doesn't separate hits from misses. 160–185 WPM is the normal range; clarity beats speed.
+- **Length**: 45–60 s is the most common band among hits in our dataset, 20–35 s is over-represented among misses, and 35–45 s shows no advantage (section 3 and 5). Choose the length the story needs, and treat "15–30 s" as a hypothesis to A/B test on your own channel.
 - **Visual change every 1–3 s**: this is plausible as *visual change* (moves, labels, rack focus), which is not the same as a *cut*. The measured median cut interval is ~5 s, and the detector misses soft transitions.
 - Useful and verifiable: platform UI safe zones. Keep text inside a centred ~900×1400 px area of 1080×1920. The bottom ~300 px (captions, buttons) and right ~100 px are covered on every platform. Instagram also covers ~210 px at the top. Upload H.264 at 8–15 Mbps; below ~5 Mbps platforms may re-compress visibly.
 

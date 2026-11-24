@@ -1,6 +1,6 @@
 # 04 — Second-by-second blueprint
 
-Plan every Short on a time grid before writing visuals. Times below are for a **35–45 s** story Short. This length is an *editorial default* for a new channel (short enough to finish, long enough for two value flips), not a measured optimum — see `data/analysis_summary.md` section 3 for the measured duration distribution by tier. Scale proportionally for 25 s or 60 s.
+Plan every Short on a time grid before writing visuals. Times below are for a **35–45 s** story Short. This length is an *editorial default* for a new channel (short enough to finish, long enough for two value flips), not a measured optimum — in the v2 data, 45–60 s is the most common band among hits, 20–35 s is over-represented among misses, and 35–45 s shows no edge (`data/analysis_summary.md` sections 3 and 5). Measured hygiene: first cut before ~4 s. Scale proportionally for 25 s or 60 s.
 
 ## Master grid (40 s example)
 

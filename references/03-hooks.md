@@ -47,7 +47,7 @@ Never: logo, title card, black, slow fade, a narrator greeting, generic stock sk
 
 ## E. Measured hook library
 
-See `data/hooks_library.md` — first 3 seconds (spoken words), first-word time, first-cut time and view counts of 76 top Shorts. Patterns extracted from it are summarised in `data/analysis_summary.md`.
+See `data/hooks_library.md` — first 3 seconds (spoken words), first-word time, first-cut time and view counts and TOP/MID/LOW tier of 302 Shorts from 19 channels. Patterns extracted from it are summarised in `data/analysis_summary.md`.
 
 ## F. 60 fill-in templates
 
