@@ -73,3 +73,6 @@ Every rule in this skill is one of: **[M] measured** in `data/` (with the tier c
 ## When asked for N videos
 
 Produce a batch plan table first (story, emotion, hook type, length, look, structure, ending pattern) and make sure the variation rule holds, then produce N complete `short_plan.md` deliverables. Never shorten later videos in the batch: video 10 gets the same depth as video 1.
+
+## Code production
+To produce the video with code instead of hand editing, follow `references/14-code-production.md`. It maps every shot type to a renderable function and defines the per-video build.py contract, the self-checks and the encode settings.
