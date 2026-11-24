@@ -39,3 +39,9 @@ Rule: produce only stories ≥ 28/40 AND ≥ 20/25.
 ## 4. Learn from your own results
 
 After each batch, tag each video with its hook type, emotion, length, structure and story category, and compare *within your own channel* (top third vs. bottom third by viewed-vs-swiped and average % viewed). Update the weights above with what actually separated them.
+
+## Outlier multiple, not raw views [M/R]
+
+Raw views rank channel size, not ideas. Score every candidate reference video as **views ÷ its own channel's median** (≥ 4 videos per channel, preferably ≥ 30, newest ~10 excluded because their views are not settled). A 400 k Short on a channel whose median is 30 k (13×) is worth studying; a 4 M Short on a channel whose median is 3 M (1.3×) is a normal day. `tools/third_party/youtube-agent-skill/swipe.py collected.json --min 2.0` ranks a `yt-dlp --flat-playlist -J` export this way. When you present outliers: the top five with multiples, the hook formula each used (a judgement about the title, not a proven cause), the ONE structural thing they share, and which one this channel can make this week with real archive.
+
+Small/new channels matter more than giants here: a 10× outlier on a 5 k-subscriber channel shows the *topic and packaging* carried it, not the audience.

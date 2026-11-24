@@ -25,6 +25,7 @@ This skill is built on measured data (~300 Shorts from 19 channels, each channel
 | `references/10-qa-checklist.md` | 100-point rubric + technical and human-eye gates |
 | `references/11-story-discovery.md` | finding stories with proven demand; 40-point viral-potential score |
 | `references/12-critic-agent.md` | independent critic that judges the rendered video |
+| `references/13-camera-direction.md` | six-layer shot spec, sealed camera moves, move by feeling, 2.5D archive parallax, time/space, finishing |
 | `tools/find_archive.py` | automatic real-archive image finder with licence + credits |
 | `tools/critic_pack.py` | evidence pack from a rendered mp4 for the critic |
 | `tools/scout.py`, `tools/analyze_shorts.py`, `tools/aggregate.py` | reproduce the dataset |
@@ -61,6 +62,7 @@ Every rule in this skill is one of: **[M] measured** in `data/` (with the tier c
 5. **Beat map** on the time grid (`04`): loops L1–L4, emotion, turn, peak.
 6. **Shot list**: one spec line per shot (`04` format) using the shot vocabulary (`06`); rotate types; check for repeats.
 7. **Sound plan** per shot (`07`).
+7a. **Direct every shot** in six layers with one sealed move (`13`).
 7b. **Find real visuals** with `tools/find_archive.py` (licence + credit per file), then review every file by eye.
 8. **Title, caption, hashtags, cover frame, pinned comment** (`01`, `08`).
 9. **Score with the rubric** (`10`). < 85 → revise the weakest dimension and re-score.

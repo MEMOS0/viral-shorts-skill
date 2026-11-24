@@ -37,3 +37,15 @@ VISUAL ASSETS (file, licence, credit line):
 - No invented quotes; reconstructions are labelled.
 - Images: licence checked (public domain, CC BY / BY-SA with credit, official government works, or licensed). Credit list saved in the video folder.
 - Sensitive topics (deaths): respectful wording, no gore, no mocking victims.
+
+
+## Reference-video breakdown: five aspects per shot [R/E]
+
+(Structure adapted from OpenMontage's video-reference analyst and the CHAI five-aspect captioning; rewritten here.) When analysing a Short you want to learn from, use the contact sheet and the transcript to describe **every shot** in five labelled aspects. Write N/A when an aspect does not apply; leaving an aspect out silently is the most common analyst mistake.
+1. **Subject**: what or who, how many, and how it changes across shots (revealed, disappears, switches).
+2. **Subject motion**: actions in time order.
+3. **Scene**: setting, time of day, POV (aerial, macro, top-down, handheld, locked-off), and **overlays as their own layer** (text, labels, arrows, watermark).
+4. **Spatial framing**: shot size, subject position, foreground/mid/background use, and how these change.
+5. **Camera**: playback speed (real time, slow motion, time-lapse), lens, height, angle, focus/DOF, steadiness, move.
+
+Then classify the **motion type** of each shot: real footage, an animated still (pan/zoom/parallax), a 3D render, a code-drawn diagram or a static image. Never guess. The mix tells you the production method you would need to match it. End with **what makes it work** (two or three specific things) and **how ours differs**: same structure with a different story, same story from a different angle, or a different visual treatment. Never copy.

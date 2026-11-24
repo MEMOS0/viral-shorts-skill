@@ -113,3 +113,28 @@ See `data/hooks_library.md` — first 3 seconds (spoken words), first-word time,
 60. "[Thing] made a sound nobody had ever heard."
 
 Templates are starting points only; every final hook must pass section B and use the story's real concrete details.
+
+## Weakest-link hook scoring [R/E]
+
+(Adapted from Jakeschincariol/youtube-agent-skill `hookscore.py`, MIT.) Score each hook option on five properties 0–100 — **specificity** (number, name, date; no vague adjectives), **stakes** (what is lost: lives, money, a city), **curiosity gap** (a question it raises and does not answer; "because…" in the hook closes the gap), **concreteness of the first visual** (can frame 0 *show* it?), **brevity** (story Shorts: 6–14 spoken words before the first comma-pause). Verdict = 0.6 × mean + 0.4 × weakest. A hook with four strong properties and one dead one leaks at the dead one; averaging hides that.
+
+Run `python tools/hookscore_story.py hooks.txt` on the ten options, keep the top two, test both against frame 0. **Honesty note:** the original tool, tested on 74 real hooks, separated deliberately bad hooks from real ones but barely separated a creator's hits from their own misses. `data/analysis_summary.md` reports how our version does on TOP vs LOW tiers. A low score is a reason to rewrite; a high score is not a promise.
+
+## Every hook type has a failure mode
+
+| Hook type | Fails when |
+|---|---|
+| Number / statistic | the number is vague, unverifiable, or not shown on screen |
+| Impossible result | the proof does not start within ~5 s of a Short |
+| Wrong belief / mistake | the viewer cannot check the belief in one second |
+| Contrarian flip | no evidence follows immediately → reads as contrarian for its own sake |
+| "This is…" receipt | there is no real artefact on screen (a described receipt is not a receipt) |
+| Warning / stakes | the cost is small — then the hook is a lie and trust is spent |
+| Question | it is the producer's question, not the viewer's |
+| Superlative ("the deadliest") | it does not name what it beat |
+| Clock / countdown | the clock is not true to the runtime |
+| Insider / hidden | it claims access the channel does not have |
+
+## Rules for cutting a Short out of a long video [E]
+
+A Short is not the best moment of a long video; it is a moment that **survives without the video around it**. A span qualifies only if: (1) it opens on a complete thought, (2) it contains a turn, (3) it ends on a line, not a trail-off. Then write a NEW first line (the long-form line assumes context), on-screen text for the first 2 s in *different words* from the spoken line, and a loop point (the last line sets up the first). Note what a 9:16 crop of the 16:9 frame loses.

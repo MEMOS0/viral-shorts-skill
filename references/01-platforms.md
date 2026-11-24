@@ -47,3 +47,39 @@ Format facts:
 ## Metrics to log per video (for the feedback loop)
 
 `viewed_vs_swiped`, `avg_pct_viewed`, `avg_view_duration`, `retention_at_3s`, `retention_at_50pct`, `loops`, `shares`, `sends_per_reach` (IG), `comments`, `subs_gained`, `profile_visits`, `waitlist_signups` (via UTM'd bio link). After every 10 videos, compare hooks, durations and emotions against these numbers and update `data/` and `references/03-hooks.md`.
+
+## Reading the retention graph [R/E]
+
+(Adapted from youtube-agent-skill `retention.py`, MIT.) Export: Studio → video → Analytics → Engagement → audience-retention chart → download. Then `python tools/third_party/youtube-agent-skill/retention.py retention.csv --duration 41 --transcript words.srt`.
+
+Three different problems — fix only the biggest:
+- **Hook leak** — loss in the opening. For a Short, read it as *viewed vs swiped* plus the drop in the first 3 s. Always a script/frame-0 fix, never the edit.
+- **Cliffs** — single steep drops at a moment (topic change without signpost, a slow setup, the product bridge, a static shot). With the transcript you see the exact words spoken at the cliff; that is the actionable part.
+- **Slide** — steady bleed across the middle. That is pacing: cut, don't rewrite.
+
+If the hook is healthy and the slide is flat, the video is fine and the problem is packaging (title, first frame as thumbnail, topic).
+
+## Title lint [R/E]
+
+`python tools/third_party/youtube-agent-skill/title.py --title "..."` — desktop truncates around 60 characters and the mobile feed around 40, so the subject must sit in the first 40. Not more than two ALL-CAPS words. A number, a name or a date beats any adjective. The on-screen text in frame 0 must not repeat the title word for word: different words, same promise. Write ten titles, keep two.
+
+## Search query test (long-form and evergreen Shorts) [E]
+
+Before publishing, write the three queries a real person would type to find this story ("gimli glider", "plane ran out of fuel"). The title and the first two description lines must contain those words. The first two description lines are the only ones read (above "...more").
+
+## Audit = one fix [E]
+
+When reviewing the channel: read the last ten titles as a set (same shape = a format problem), look at first frames at feed size, score the hooks of the three latest, check upload consistency, read retention. Hand back ONE fix for this week, three specific things that already work (so they are not broken) and what NOT to change yet.
+
+
+## Third-party "Shorts statistics": check them before you trust them [M]
+
+Guides on the internet (including OpenMontage's short-form guide, which cites marketing blogs) repeat numbers like "180–200 WPM", "no static hold over 3 s", "15–30 s gets the most completion" or "3-second retention above 85 % gives 2.8× views". Most of them can't be checked. Test each one against `data/analysis_summary.md` before you use it:
+- **Narration speed**: our successful story Shorts have a median of ~160 WPM, not 180–200. Clarity beats speed for story content.
+- **Length**: our dataset spreads from 20 s to over 90 s across all tiers (section 3). No single length band is proven best. Choose the length the story needs, and treat "15–30 s" as a hypothesis to A/B test on your own channel.
+- **Visual change every 1–3 s**: this is plausible as *visual change* (moves, labels, rack focus), which is not the same as a *cut*. The measured median cut interval is ~5 s, and the detector misses soft transitions.
+- Useful and verifiable: platform UI safe zones. Keep text inside a centred ~900×1400 px area of 1080×1920. The bottom ~300 px (captions, buttons) and right ~100 px are covered on every platform. Instagram also covers ~210 px at the top. Upload H.264 at 8–15 Mbps; below ~5 Mbps platforms may re-compress visibly.
+
+## Sample first [E]
+
+Before you produce a batch, take ONE Short all the way to final: render, critic, fix. Lock the look, the sound bed and the caption style on that one. Building ten Shorts on an unproven look multiplies one mistake by ten.
