@@ -4,7 +4,7 @@ Run: python tools/mcp_server.py  (stdio MCP transport). Requires `mcp<2`.
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mcp.server.fastmcp import FastMCP
-import check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate
+import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 mcp = FastMCP("viral-shorts-skill")
@@ -37,6 +37,12 @@ def score_hook(text: str) -> dict:
     """Score a story hook with the local heuristic model."""
     props, score = hookscore_story.score(text)
     return {"score": score, "properties": props}
+
+@mcp.tool()
+def calibrate_scores(rows: list[dict]) -> dict:
+    """Measure whether topic/critic scores actually predict published-video outcomes."""
+    res = calibrate.run([dict(r) for r in rows])
+    return {"results": [{"predictor": p, "outcome": o, "n": n, "rho": rho, "ci95": ci} for (p, o), (n, rho, ci) in res.items()], "minimum_videos": 8}
 
 @mcp.tool()
 def search_skill(query: str, limit: int = 5) -> list:

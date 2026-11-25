@@ -21,3 +21,11 @@ def test_mcp_hook_and_package_tools():
     assert 0 <= h["score"] <= 100
     p = mcp_server.lint_package({"platform": "youtube", "title": "The hyphen that doomed a rocket", "description": "sources", "hashtags": ["#engineering"], "alt_titles": ["a","b","c","d"]})
     assert p["pass"]
+
+
+def test_mcp_calibration_is_machine_readable():
+    import mcp_server
+    rows = [dict(topic_score=i, views_7d=1000 * (i + 1), channel_median_7d=1000, critic_qa=50) for i in range(12)]
+    r = mcp_server.calibrate_scores(rows)
+    hit = next(x for x in r["results"] if x["predictor"] == "topic_score" and x["outcome"] == "multiple")
+    assert hit["n"] == 12 and hit["rho"] > 0.9
