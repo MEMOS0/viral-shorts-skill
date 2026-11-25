@@ -4,3 +4,6 @@ Pillow>=10.0
 yt-dlp>=2024.10.0      # scout.py, fetch_meta.py, outliers.py (needs a JS runtime such as node for some YouTube pages)
 openai-whisper>=20231117  # analyze_shorts.py, critic_pack.py (optional: --no-whisper)
 pytest>=7.0            # tests/
+
+jsonschema>=4.20
+mcp>=1.0,<2       # tools/mcp_server.py

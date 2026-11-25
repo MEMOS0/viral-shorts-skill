@@ -1,0 +1,23 @@
+import json, os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
+
+def test_schema_validation_and_mcp_tools_import():
+    import mcp_server, schema_validate
+    assert schema_validate.validate("package", {"platform": "youtube", "title": "x", "hashtags": ["#engineering"]}) == []
+    assert schema_validate.validate("package", {"platform": "youtube", "hashtags": ["bad tag"]})
+    assert mcp_server.validate_json("package", {"platform": "youtube", "title": "x"})["pass"]
+    bad = mcp_server.validate_json("storyboard", {"duration": 0, "shots": []})
+    assert not bad["pass"] and bad["errors"]
+
+def test_semantic_search_returns_deterministic_relevant_skill_evidence():
+    import semantic_search
+    a = semantic_search.search("opening hook cause hidden rocket failure", 3)
+    b = semantic_search.search("opening hook cause hidden rocket failure", 3)
+    assert a == b and len(a) == 3 and a[0]["score"] > 0 and a[0]["source"].endswith(".md")
+
+def test_mcp_hook_and_package_tools():
+    import mcp_server
+    h = mcp_server.score_hook("One missing hyphen destroyed an $18 million rocket.")
+    assert 0 <= h["score"] <= 100
+    p = mcp_server.lint_package({"platform": "youtube", "title": "The hyphen that doomed a rocket", "description": "sources", "hashtags": ["#engineering"], "alt_titles": ["a","b","c","d"]})
+    assert p["pass"]
