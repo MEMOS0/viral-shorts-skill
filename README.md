@@ -7,7 +7,7 @@ A complete, data-backed skill for creating high-retention **story Shorts and Ree
 - `data/` — second-by-second measurements of 302 Shorts (TOP/MID/LOW within each of 19 channels): words, cuts, motion, first frame, loudness, views/day; effect sizes, CIs, split-half replication and an honest interpretation (`data/analysis_summary.md`).
 - `templates/` — per-video plan and batch plan formats.
 - `examples/` — fully worked Shorts.
-- `tools/` — discovery gate, outlier finder, archive finder, storyboard checker, render critic pack, calibration, blind pair test and the full dataset chain. `tests/` — regression tests (`python -m pytest -q tests`).
+- `tools/` — discovery gate, outlier finder, archive finder, live trend scanner, storyboard checker, render critic pack, calibration, blind pair test and the full dataset chain. `tests/` — regression tests (`python -m pytest -q tests`).
 - `AGENTS.md` — stage files, hand-offs and hard stops for agents. Install: `pip install -r requirements.txt` + FFmpeg.
 
 ## MCP/server use
@@ -19,7 +19,7 @@ pip install -r requirements.txt
 python tools/mcp_server.py
 ```
 
-Tools expose schema validation, topic-gate evaluation, storyboard validation, package linting, hook scoring and deterministic local semantic retrieval. Markdown references are available as `skill://...` resources; path traversal outside the repository is rejected. The server never overrides hard gates.
+Tools expose schema validation, topic-gate evaluation, live demand scanning, storyboard validation, package linting, hook scoring and deterministic local semantic retrieval. Markdown references are available as `skill://...` resources; path traversal outside the repository is rejected. The server never overrides hard gates.
 
 Usage with any LLM: give it `SKILL.md` plus the `references/` files (or the single-file `ALL_IN_ONE.md`) and ask for a batch, e.g. "Using this skill, plan 10 engineering-disaster Shorts for YouTube and Instagram."
 

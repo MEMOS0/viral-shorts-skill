@@ -29,3 +29,10 @@ def test_mcp_calibration_is_machine_readable():
     r = mcp_server.calibrate_scores(rows)
     hit = next(x for x in r["results"] if x["predictor"] == "topic_score" and x["outcome"] == "multiple")
     assert hit["n"] == 12 and hit["rho"] > 0.9
+
+
+def test_scan_topic_demand_is_machine_readable(monkeypatch):
+    import mcp_server, trend_scan
+    monkeypatch.setattr(trend_scan, "scan_topics", lambda topics, **kw: {"topics": [{"id": topics[0]["id"], "summary": {"evidence_types": 3}}]})
+    r = mcp_server.scan_topic_demand([{"id": "t", "title": "x"}], days=90)
+    assert r["topics"][0]["summary"]["evidence_types"] == 3

@@ -4,7 +4,7 @@ Run: python tools/mcp_server.py  (stdio MCP transport). Requires `mcp<2`.
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mcp.server.fastmcp import FastMCP
-import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate
+import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate, trend_scan
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 mcp = FastMCP("viral-shorts-skill")
@@ -48,6 +48,12 @@ def calibrate_scores(rows: list[dict]) -> dict:
 def search_skill(query: str, limit: int = 5) -> list:
     """Semantically retrieve relevant skill rules, examples and measured hook evidence."""
     return semantic_search.search(query, max(1, min(20, int(limit))))
+
+
+@mcp.tool()
+def scan_topic_demand(topics: list[dict], days: int = 90, youtube_n: int = 8, reddit_limit: int = 5) -> dict:
+    """Collect live Wikipedia/YouTube/Reddit demand evidence for Story Scout topics; never fills judgment scores."""
+    return trend_scan.scan_topics(topics, days=max(7, min(365, int(days))), youtube_n=max(1, min(20, int(youtube_n))), reddit_limit=max(1, min(10, int(reddit_limit))))
 
 @mcp.resource("skill://{path}")
 def read_skill_file(path: str) -> str:

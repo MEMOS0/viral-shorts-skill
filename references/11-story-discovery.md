@@ -27,7 +27,7 @@ Produce **≥ 5 candidate topics, each with ≥ 3 angles**, from at least three 
 | Investigation reports (NTSB, AAIB, BEA, TSB, CSB, NASA, NIST, court records) | single concrete cause, primary source |
 | Wikipedia lists + pageviews API (`wikimedia.org/api/rest_v1/metrics/pageviews/per-article/...`) | candidate pool + 90-day interest |
 | YouTube Shorts and long-form on the topic (`tools/outliers.py`) | demand, saturation, outlier multiples |
-| Google Trends (5-year and 90-day) | rising / flat / falling; spikes from news |
+| Live scanner (`tools/trend_scan.py`) + Google Trends (5-year and 90-day) | current Wikipedia/YouTube/Reddit evidence; rising / flat / falling only when manually verified |
 | Reddit (r/CatastrophicFailure, r/engineering, r/todayilearned; top of year) | what people already share and argue about |
 | Comments on competitors' and your own top videos | explicit "do X next", confusion, debate |
 | Anniversaries in the next 30–60 days, current news | timeliness |
