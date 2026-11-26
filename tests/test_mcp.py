@@ -142,3 +142,21 @@ def test_installed_wheel_corpus_root_fallback(monkeypatch, tmp_path):
     monkeypatch.delenv("VIRAL_SHORTS_ROOT", raising=False)
     monkeypatch.setattr(skill_root, "__file__", str(package / "skill_root.py"))
     assert skill_root.skill_root() == str(corpus)
+
+
+def test_corpus_copy_removes_stale_deleted_files(tmp_path):
+    import build_corpus
+    root = tmp_path / "repo"
+    root.mkdir()
+    for name in build_corpus.ROOT_FILES:
+        (root / name).write_text("# x", encoding="utf-8")
+    for name in build_corpus.CORPUS_DIRS:
+        (root / name).mkdir()
+        (root / name / "stale.md").write_text("old", encoding="utf-8")
+    build = tmp_path / "build"
+    first = build_corpus.copy_corpus(root, build)
+    assert (first / "references" / "stale.md").exists()
+    (root / "references" / "stale.md").unlink()
+    second = build_corpus.copy_corpus(root, build)
+    assert not (second / "references" / "stale.md").exists()
+    assert (second / "data" / "stale.md").exists()
