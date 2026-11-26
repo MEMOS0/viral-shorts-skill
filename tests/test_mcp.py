@@ -135,11 +135,10 @@ def test_mcp_critic_pack_subprocess_does_not_inherit_stdio(monkeypatch, tmp_path
 
 def test_installed_wheel_corpus_root_fallback(monkeypatch, tmp_path):
     import skill_root
-    prefix = tmp_path / "venv"
-    installed = prefix / "viral-shorts-skill"
-    installed.mkdir(parents=True)
-    (installed / "SKILL.md").write_text("# skill", encoding="utf-8")
+    package = tmp_path / "site-packages" / "viral_shorts"
+    corpus = package / "corpus"
+    corpus.mkdir(parents=True)
+    (corpus / "SKILL.md").write_text("# skill", encoding="utf-8")
     monkeypatch.delenv("VIRAL_SHORTS_ROOT", raising=False)
-    monkeypatch.setattr(skill_root, "__file__", str(tmp_path / "site-packages" / "tools" / "skill_root.py"))
-    monkeypatch.setattr(sys, "prefix", str(prefix))
-    assert skill_root.skill_root() == str(installed)
+    monkeypatch.setattr(skill_root, "__file__", str(package / "skill_root.py"))
+    assert skill_root.skill_root() == str(corpus)

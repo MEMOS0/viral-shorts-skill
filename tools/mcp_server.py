@@ -4,8 +4,12 @@ Run: python tools/mcp_server.py  (stdio MCP transport). Requires `mcp<2`.
 import json, os, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mcp.server.fastmcp import FastMCP
-import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate, trend_scan
-from skill_root import skill_root
+try:
+    from . import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate, trend_scan
+    from .skill_root import skill_root
+except ImportError:
+    import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate, trend_scan
+    from skill_root import skill_root
 
 ROOT = skill_root()
 mcp = FastMCP("viral-shorts-skill")

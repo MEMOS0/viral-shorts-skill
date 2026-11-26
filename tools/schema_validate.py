@@ -1,7 +1,10 @@
 """JSON Schema validation for the machine-readable stage files.
 usage: python schema_validate.py discovery|storyboard|package file.json"""
 import json, os, sys
-from skill_root import skill_root
+try:
+    from .skill_root import skill_root
+except ImportError:
+    from skill_root import skill_root
 from jsonschema import Draft202012Validator
 def root():
     return skill_root()

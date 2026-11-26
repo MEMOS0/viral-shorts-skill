@@ -2,7 +2,10 @@
 No network or external embedding API: lowercase word/character-ngram hashing + cosine. It is meant
 for retrieval inside the skill, not as a claim of state-of-the-art embeddings."""
 import math, os, re
-from skill_root import skill_root
+try:
+    from .skill_root import skill_root
+except ImportError:
+    from skill_root import skill_root
 def root():
     return skill_root()
 
