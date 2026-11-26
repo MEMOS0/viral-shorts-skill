@@ -1,4 +1,4 @@
-import json, os, sys
+import json, os, subprocess, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 
 def test_schema_validation_and_mcp_tools_import():
@@ -113,3 +113,21 @@ def test_critic_pack_subprocesses_do_not_inherit_stdio(monkeypatch):
     critic_pack.sh("ffmpeg", "-version")
     assert calls[0]["stdin"] is subprocess.DEVNULL
 
+
+
+def test_mcp_critic_pack_subprocess_does_not_inherit_stdio(monkeypatch, tmp_path):
+    import mcp_server
+    video = tmp_path / "in.mp4"
+    video.write_bytes(b"x")
+    calls = []
+    class Result:
+        returncode = 0
+        stdout = '{"gate_pass": true, "duration": 1.0}\n'
+        stderr = ""
+    def fake_run(*args, **kwargs):
+        calls.append(kwargs)
+        return Result()
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    result = mcp_server.build_critic_pack(str(video), str(tmp_path / "critic"), no_whisper=True)
+    assert result["pass"]
+    assert calls[0]["stdin"] is subprocess.DEVNULL

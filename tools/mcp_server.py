@@ -73,7 +73,7 @@ def build_critic_pack(video: str, outdir: str, holds: list | None = None, model:
         json.dump(holds, open(holds_path, "w"))
         cmd.extend(["--holds", holds_path])
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=600, stdin=subprocess.DEVNULL)
     except Exception as e:
         return {"pass": False, "errors": [str(e)]}
     metrics = None
