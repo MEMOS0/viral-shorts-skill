@@ -1,7 +1,7 @@
 """MCP server exposing the viral-shorts production gates to AI agents.
 Run: python tools/mcp_server.py  (stdio MCP transport). Requires `mcp<2`.
 """
-import json, os, sys
+import json, os, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mcp.server.fastmcp import FastMCP
 import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate, trend_scan
@@ -59,6 +59,28 @@ def _read_markdown(*parts: str) -> str:
     p = os.path.abspath(os.path.join(ROOT, *parts))
     if not p.startswith(os.path.abspath(ROOT) + os.sep) or not p.endswith(".md") or not os.path.isfile(p): raise ValueError("not a markdown file inside the skill")
     return open(p, encoding="utf-8").read()
+
+@mcp.tool()
+def build_critic_pack(video: str, outdir: str, holds: list | None = None, model: str = "base.en", lang: str = "en", freeze: float = 0.5, no_whisper: bool = False) -> dict:
+    """Build the post-render critic evidence pack from a local video with ffmpeg; gate_pass must be true before critic review."""
+    if not os.path.isfile(video): return {"pass": False, "errors": [f"no such video: {video}"]}
+    os.makedirs(outdir, exist_ok=True)
+    cmd = [sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "critic_pack.py"), video, outdir, "--model", model, "--lang", lang, "--freeze", str(freeze)]
+    if no_whisper: cmd.append("--no-whisper")
+    holds_path = None
+    if holds is not None:
+        holds_path = os.path.join(outdir, "holds.mcp.json")
+        json.dump(holds, open(holds_path, "w"))
+        cmd.extend(["--holds", holds_path])
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+    except Exception as e:
+        return {"pass": False, "errors": [str(e)]}
+    metrics = None
+    try: metrics = json.loads((r.stdout or "").strip().splitlines()[-1])
+    except Exception: pass
+    errors = [] if r.returncode == 0 and metrics else [((r.stderr or r.stdout or "critic pack failed").strip()[-500:])]
+    return {"pass": not errors and bool(metrics.get("gate_pass")), "errors": errors, "metrics": metrics, "gate_pass": bool(metrics and metrics.get("gate_pass")), "outdir": os.path.abspath(outdir)}
 
 @mcp.resource("skill://{path}")
 def read_skill_file(path: str) -> str:

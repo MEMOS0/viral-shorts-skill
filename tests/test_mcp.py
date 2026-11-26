@@ -86,3 +86,14 @@ def test_mcp_server_reads_nested_markdown_resource():
     result = asyncio.run(run())
     assert "YouTube" in result.contents[0].text
 
+def test_mcp_critic_pack_builds_real_postrender_evidence(tmp_path):
+    import subprocess
+    import mcp_server
+
+    video = tmp_path / "in.mp4"
+    outdir = tmp_path / "critic"
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i", "testsrc=duration=1:size=64x64:rate=10", "-pix_fmt", "yuv420p", str(video)], check=True)
+    result = mcp_server.build_critic_pack(str(video), str(outdir), no_whisper=True)
+    assert result["pass"] and result["gate_pass"] and result["metrics"]["duration"] == 1.0
+    assert (outdir / "proxy.mp4").exists() and (outdir / "metrics.json").exists()
+
