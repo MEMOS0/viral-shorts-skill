@@ -97,3 +97,19 @@ def test_mcp_critic_pack_builds_real_postrender_evidence(tmp_path):
     assert result["pass"] and result["gate_pass"] and result["metrics"]["duration"] == 1.0
     assert (outdir / "proxy.mp4").exists() and (outdir / "metrics.json").exists()
 
+def test_critic_pack_subprocesses_do_not_inherit_stdio(monkeypatch):
+    import subprocess
+    import critic_pack
+
+    calls = []
+    class Result:
+        returncode = 0
+        stdout = ""
+        stderr = ""
+    def fake_run(*args, **kwargs):
+        calls.append(kwargs)
+        return Result()
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    critic_pack.sh("ffmpeg", "-version")
+    assert calls[0]["stdin"] is subprocess.DEVNULL
+
