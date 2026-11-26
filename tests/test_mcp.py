@@ -36,3 +36,13 @@ def test_scan_topic_demand_is_machine_readable(monkeypatch):
     monkeypatch.setattr(trend_scan, "scan_topics", lambda topics, **kw: {"topics": [{"id": topics[0]["id"], "summary": {"evidence_types": 3}}]})
     r = mcp_server.scan_topic_demand([{"id": "t", "title": "x"}], days=90)
     assert r["topics"][0]["summary"]["evidence_types"] == 3
+
+
+def test_console_entrypoint_and_root_override(monkeypatch):
+    import importlib, mcp_server
+    assert callable(mcp_server.main)
+    monkeypatch.setenv("VIRAL_SHORTS_ROOT", "/tmp/skill-root")
+    reloaded = importlib.reload(mcp_server)
+    assert reloaded.ROOT == reloaded.os.path.abspath("/tmp/skill-root")
+    monkeypatch.delenv("VIRAL_SHORTS_ROOT")
+    importlib.reload(reloaded)

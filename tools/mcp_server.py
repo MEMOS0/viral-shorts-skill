@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mcp.server.fastmcp import FastMCP
 import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate, trend_scan
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.abspath(os.environ.get("VIRAL_SHORTS_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 mcp = FastMCP("viral-shorts-skill")
 
 @mcp.tool()
@@ -62,5 +62,8 @@ def read_skill_file(path: str) -> str:
     if not p.startswith(os.path.abspath(ROOT) + os.sep) or not p.endswith(".md") or not os.path.isfile(p): raise ValueError("not a markdown file inside the skill")
     return open(p, encoding="utf-8").read()
 
-if __name__ == "__main__":
+def main():
     mcp.run()
+
+if __name__ == "__main__":
+    main()

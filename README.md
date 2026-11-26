@@ -15,8 +15,15 @@ A complete, data-backed skill for creating high-retention **story Shorts and Ree
 AI agents can call the production gates directly over stdio MCP:
 
 ```bash
-pip install -r requirements.txt
-python tools/mcp_server.py
+pip install -e .[test]
+viral-shorts-mcp
+# or without installing: python tools/mcp_server.py
+```
+
+The server is intentionally repo-bound because its Markdown references and measured data are part of the corpus. Use an editable install from the checkout, or set `VIRAL_SHORTS_ROOT` to the checkout when launching it from another environment. Client configuration shape:
+
+```json
+{"mcpServers":{"viral-shorts":{"command":"viral-shorts-mcp","env":{"VIRAL_SHORTS_ROOT":"/absolute/path/to/viral-shorts-skill"}}}}
 ```
 
 Tools expose schema validation, topic-gate evaluation, live demand scanning, storyboard validation, package linting, hook scoring and deterministic local semantic retrieval. Markdown references are available as `skill://...` resources; path traversal outside the repository is rejected. The server never overrides hard gates.
