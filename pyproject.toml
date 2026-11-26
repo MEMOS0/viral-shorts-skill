@@ -21,7 +21,11 @@ test = ["pytest>=7.0"]
 whisper = ["openai-whisper>=20231117"]
 
 [project.scripts]
-viral-shorts-mcp = "tools.mcp_server:main"
+viral-shorts-mcp = "viral_shorts.mcp_server:main"
 
 [tool.setuptools]
-packages = ["tools"]
+packages = ["viral_shorts"]
+
+[tool.setuptools.package-dir]
+viral_shorts = "tools"
+

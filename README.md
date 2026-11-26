@@ -20,13 +20,13 @@ viral-shorts-mcp
 # or without installing: python tools/mcp_server.py
 ```
 
-The server is intentionally repo-bound because its Markdown references and measured data are part of the corpus. Use an editable install from the checkout, or set `VIRAL_SHORTS_ROOT` to the checkout when launching it from another environment. Client configuration shape:
+The Markdown references and measured data are part of the package corpus. A normal wheel install includes them; use an editable install for development, or set `VIRAL_SHORTS_ROOT` to a checkout when launching against a separate working copy. Client configuration shape:
 
 ```json
 {"mcpServers":{"viral-shorts":{"command":"viral-shorts-mcp","env":{"VIRAL_SHORTS_ROOT":"/absolute/path/to/viral-shorts-skill"}}}}
 ```
 
-Tools expose schema validation, topic-gate evaluation, live demand scanning, storyboard validation, package linting, hook scoring and deterministic local semantic retrieval. Markdown references are available as `skill://...` resources; path traversal outside the repository is rejected. The server never overrides hard gates.
+Tools expose schema validation, topic-gate evaluation, live demand scanning, storyboard validation, package linting, hook scoring, post-render critic-pack generation, calibration and deterministic local semantic retrieval. Markdown references are available as `skill://...` resources; path traversal outside the repository is rejected. The server never overrides hard gates.
 
 Usage with any LLM: give it `SKILL.md` plus the `references/` files (or the single-file `ALL_IN_ONE.md`) and ask for a batch, e.g. "Using this skill, plan 10 engineering-disaster Shorts for YouTube and Instagram."
 

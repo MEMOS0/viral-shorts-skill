@@ -7,7 +7,10 @@ Outcome = views_7d ÷ channel_median_7d (outlier multiple at the same age, so vi
 """
 import csv, math, os, statistics as S, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from stats_util import bootstrap_ci, spearman
+try:
+    from .stats_util import bootstrap_ci, spearman
+except ImportError:
+    from stats_util import bootstrap_ci, spearman
 
 PRED = ("topic_score", "angle_score", "critic_qa", "critic_viral")
 OUT = ("multiple", "viewed_vs_swiped", "avg_pct_viewed")

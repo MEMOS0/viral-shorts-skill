@@ -1,0 +1,6 @@
+include README.md SKILL.md AGENTS.md ALL_IN_ONE.md setup.py
+recursive-include references *.md
+recursive-include data *.md *.json *.csv
+recursive-include schemas *.json
+recursive-include templates *
+recursive-include examples *

@@ -2,11 +2,23 @@
 No network or external embedding API: lowercase word/character-ngram hashing + cosine. It is meant
 for retrieval inside the skill, not as a claim of state-of-the-art embeddings."""
 import math, os, re
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILES = []
-for d in ("references", "examples", "data"):
-    for n in os.listdir(os.path.join(ROOT, d)):
-        if n.endswith(".md") and (d != "data" or n in ("hooks_library.md", "analysis_summary.md")): FILES.append(os.path.join(ROOT, d, n))
+try:
+    from .skill_root import skill_root
+except ImportError:
+    from skill_root import skill_root
+def root():
+    return skill_root()
+
+def files():
+    out = []
+    for d in ("references", "examples", "data"):
+        folder = os.path.join(root(), d)
+        if not os.path.isdir(folder):
+            continue
+        for n in os.listdir(folder):
+            if n.endswith(".md") and (d != "data" or n in ("hooks_library.md", "analysis_summary.md")):
+                out.append(os.path.join(folder, n))
+    return out
 def tokens(s): return re.findall(r"[a-z0-9]{2,}", s.lower())
 def vec(s):
     v = {}
@@ -19,8 +31,8 @@ def cos(a,b):
     small,large=(a,b) if len(a)<len(b) else (b,a)
     return sum(x*large.get(k,0) for k,x in small.items())
 def chunks():
-    for path in FILES:
-        rel=os.path.relpath(path,ROOT).replace(os.sep,'/')
+    for path in files():
+        rel=os.path.relpath(path,root()).replace(os.sep,'/')
         parts=re.split(r"\n(?=#+\s)|\n\s*\n",open(path,encoding='utf8').read())
         for i,p in enumerate(parts):
             p=re.sub(r"\s+"," ",p).strip()

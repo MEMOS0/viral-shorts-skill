@@ -13,7 +13,7 @@ pack.md (metrics + per-second transcript + per-second motion and loudness).
 import argparse, json, os, re, subprocess, sys
 
 def sh(*a):
-    r = subprocess.run(a, capture_output=True, text=True, errors="replace")
+    r = subprocess.run(a, capture_output=True, text=True, errors="replace", stdin=subprocess.DEVNULL)
     if r.returncode != 0:
         raise RuntimeError(f"{a[0]} failed ({r.returncode}): {r.stderr[-400:]}")
     return r
