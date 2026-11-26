@@ -46,3 +46,23 @@ def test_console_entrypoint_and_root_override(monkeypatch):
     assert reloaded.ROOT == reloaded.os.path.abspath("/tmp/skill-root")
     monkeypatch.delenv("VIRAL_SHORTS_ROOT")
     importlib.reload(reloaded)
+
+def test_mcp_server_stdio_initialize_and_call_tool():
+    import asyncio
+    from mcp import ClientSession
+    from mcp.client.stdio import StdioServerParameters, stdio_client
+
+    async def run():
+        script = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools", "mcp_server.py")
+        params = StdioServerParameters(command=sys.executable, args=[script])
+        async with stdio_client(params) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                tools = await session.list_tools()
+                result = await session.call_tool("lint_package", {"package": {"platform": "youtube", "title": "x", "description": "sources", "hashtags": ["#engineering"], "alt_titles": ["a", "b", "c", "d"]}})
+                return tools, result
+
+    tools, result = asyncio.run(run())
+    assert "lint_package" in {t.name for t in tools.tools}
+    assert json.loads(result.content[0].text)["pass"]
+
