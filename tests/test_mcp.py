@@ -68,3 +68,21 @@ def test_mcp_server_stdio_initialize_and_call_tool():
     assert "lint_package" in {t.name for t in tools.tools}
     assert json.loads(result.content[0].text)["pass"]
 
+
+def test_mcp_server_reads_nested_markdown_resource():
+    import asyncio
+    from mcp import ClientSession
+    from mcp.client.stdio import StdioServerParameters, stdio_client
+    from pydantic import AnyUrl
+
+    async def run():
+        script = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools", "mcp_server.py")
+        params = StdioServerParameters(command=sys.executable, args=[script])
+        async with stdio_client(params) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                return await session.read_resource(AnyUrl("skill://references/01-platforms.md"))
+
+    result = asyncio.run(run())
+    assert "YouTube" in result.contents[0].text
+

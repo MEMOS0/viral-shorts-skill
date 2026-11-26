@@ -55,12 +55,20 @@ def scan_topic_demand(topics: list[dict], days: int = 90, youtube_n: int = 8, re
     """Collect live Wikipedia/YouTube/Reddit demand evidence for Story Scout topics; never fills judgment scores."""
     return trend_scan.scan_topics(topics, days=max(7, min(365, int(days))), youtube_n=max(1, min(20, int(youtube_n))), reddit_limit=max(1, min(10, int(reddit_limit))))
 
-@mcp.resource("skill://{path}")
-def read_skill_file(path: str) -> str:
-    """Read a markdown file inside the skill repository; path traversal is rejected."""
-    p = os.path.abspath(os.path.join(ROOT, path))
+def _read_markdown(*parts: str) -> str:
+    p = os.path.abspath(os.path.join(ROOT, *parts))
     if not p.startswith(os.path.abspath(ROOT) + os.sep) or not p.endswith(".md") or not os.path.isfile(p): raise ValueError("not a markdown file inside the skill")
     return open(p, encoding="utf-8").read()
+
+@mcp.resource("skill://{path}")
+def read_skill_file(path: str) -> str:
+    """Read a root markdown file inside the skill repository; path traversal is rejected."""
+    return _read_markdown(path)
+
+@mcp.resource("skill://{directory}/{path}")
+def read_skill_nested_file(directory: str, path: str) -> str:
+    """Read a markdown file one level inside the skill repository; path traversal is rejected."""
+    return _read_markdown(directory, path)
 
 def main():
     mcp.run()
