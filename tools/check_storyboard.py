@@ -10,6 +10,7 @@ holds are declared (they become holds.json for critic_pack.py). Exit 0 = pass, 1
 import argparse, json, os, sys
 
 TYPES = {"archive", "document", "blender", "diagram", "map", "graph", "text", "brand"}
+BEATS = {"hook", "context", "escalation", "turn", "payoff", "cta"}
 RECON = "RECONSTRUCTION: FIRSTENGINEER"
 
 def check(sb, words=None, gate=None):
@@ -38,6 +39,16 @@ def check(sb, words=None, gate=None):
         if b - a > rules["max_static_s"] and not moves and not s.get("hold"):
             E.append(f"{sid}: {b - a:.1f} s with no move/reveal (max {rules['max_static_s']} s) — add a motivated move or split")
         if s.get("type") == "text": text += b - a
+    beats = [s.get("retention_beat") for s in shots]
+    if any(beat is not None for beat in beats):
+        for s, beat in zip(shots, beats):
+            if beat not in BEATS: E.append(f"{s.get('id', '?')}: retention_beat must be one of {sorted(BEATS)}")
+        if beats and beats[0] != "hook": E.append("retention map: first shot must be the hook beat")
+        if beats and beats[-1] not in ("payoff", "cta"): E.append("retention map: final shot must be payoff or cta")
+        if not any(beat in ("escalation", "turn") for beat in beats): E.append("retention map: needs at least one escalation or turn beat")
+        ending = len(shots) - (2 if beats and beats[-1] == "cta" else 1)
+        payoff_indexes = [i for i, beat in enumerate(beats) if beat == "payoff"]
+        if payoff_indexes and min(payoff_indexes) < ending: E.append("retention map: payoff arrives before the ending; later shots would deflate retention")
     if dur and abs(t - dur) > 0.1: E.append(f"shots end at {t:.2f} s, duration is {dur}")
     if shots[0]["end"] > rules["first_change_s"] and not shots[0].get("moves"): E.append(f"first visual change after {rules['first_change_s']} s")
     if t and text / t > rules["max_text_share"]: W.append(f"text cards are {100 * text / t:.0f} % of runtime (slideshow risk)")

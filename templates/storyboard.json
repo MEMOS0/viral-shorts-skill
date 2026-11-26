@@ -1,15 +1,18 @@
 {
   "_comment": "Machine-readable storyboard. Check with tools/check_storyboard.py storyboard.json --words words.json --gate gate.json before rendering. Shape only; values are an illustration.",
   "id": "01_example",
-  "duration": 6.0,
+  "duration": 9.0,
   "rules": {"max_static_s": 3.0, "first_change_s": 4.0, "caption_tol_s": 0.15, "max_text_share": 0.3},
   "shots": [
-    {"id": "s01", "start": 0.0, "end": 2.0, "type": "archive", "purpose": "show the real collapsed walkway: the strange image the hook names",
+    {"id": "s01", "start": 0.0, "end": 2.0, "type": "archive", "purpose": "show the real collapsed walkway: the strange image the hook names", "retention_beat": "hook",
      "visual": "NBS photo, slow push to the torn connection", "assets": ["a01_0"], "label": "PHOTO: NBS / LEE LOWERY JR.", "licence": "PD (US Gov)",
      "moves": [{"kind": "push", "from": 1.0, "to": 1.08, "ease": "out"}], "sfx": ["metal_creak"]},
-    {"id": "s02", "start": 2.0, "end": 6.0, "type": "blender", "purpose": "explain the mechanism: load path through one rod vs two",
+    {"id": "s02", "start": 2.0, "end": 6.0, "type": "blender", "purpose": "turn the image into a question: how load travels through one rod versus two", "retention_beat": "turn",
      "visual": "cutaway of box beam + nut, load arrows", "assets": ["b_design"], "badge": "RECONSTRUCTION: FIRSTENGINEER",
-     "moves": [{"kind": "orbit", "deg": 20, "ease": "inout"}], "hold": false}
+     "moves": [{"kind": "orbit", "deg": 20, "ease": "inout"}], "hold": false},
+    {"id": "s03", "start": 6.0, "end": 9.0, "type": "diagram", "purpose": "pay off the question: the second nut meant one failed connection carried everything", "retention_beat": "payoff",
+     "visual": "annotated load-path diagram isolating the single critical connection", "assets": ["d_loadpath"],
+     "moves": [{"kind": "reveal", "part": "critical_path", "ease": "out"}], "hold": false}
   ],
   "captions": [{"start": 0.0, "end": 0.6, "text": "ONE ROD"}]
 }
