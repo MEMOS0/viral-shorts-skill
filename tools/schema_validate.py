@@ -2,11 +2,12 @@
 usage: python schema_validate.py discovery|storyboard|package file.json"""
 import json, os, sys
 from jsonschema import Draft202012Validator
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def root():
+    return os.path.abspath(os.environ.get("VIRAL_SHORTS_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def validate(kind, doc):
     if kind not in ("discovery", "storyboard", "package"): return [f"unknown schema kind {kind!r}"]
-    schema = json.load(open(os.path.join(ROOT, "schemas", kind + ".schema.json"), encoding="utf-8"))
+    schema = json.load(open(os.path.join(root(), "schemas", kind + ".schema.json"), encoding="utf-8"))
     out = []
     for e in sorted(Draft202012Validator(schema).iter_errors(doc), key=lambda x: list(x.absolute_path)):
         path = "/" + "/".join(str(x) for x in e.absolute_path)

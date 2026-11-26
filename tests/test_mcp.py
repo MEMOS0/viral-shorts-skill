@@ -45,6 +45,7 @@ def test_console_entrypoint_and_root_override(monkeypatch):
     reloaded = importlib.reload(mcp_server)
     assert reloaded.ROOT == reloaded.os.path.abspath("/tmp/skill-root")
     assert reloaded.semantic_search.root() == reloaded.os.path.abspath("/tmp/skill-root")
+    assert reloaded.schema_validate.root() == reloaded.os.path.abspath("/tmp/skill-root")
     monkeypatch.delenv("VIRAL_SHORTS_ROOT")
     importlib.reload(reloaded)
 
