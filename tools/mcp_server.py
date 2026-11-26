@@ -5,8 +5,9 @@ import json, os, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mcp.server.fastmcp import FastMCP
 import calibrate, check_storyboard, hookscore_story, package_lint, schema_validate, semantic_search, topic_gate, trend_scan
+from skill_root import skill_root
 
-ROOT = os.path.abspath(os.environ.get("VIRAL_SHORTS_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ROOT = skill_root()
 mcp = FastMCP("viral-shorts-skill")
 
 @mcp.tool()

@@ -131,3 +131,15 @@ def test_mcp_critic_pack_subprocess_does_not_inherit_stdio(monkeypatch, tmp_path
     result = mcp_server.build_critic_pack(str(video), str(tmp_path / "critic"), no_whisper=True)
     assert result["pass"]
     assert calls[0]["stdin"] is subprocess.DEVNULL
+
+
+def test_installed_wheel_corpus_root_fallback(monkeypatch, tmp_path):
+    import skill_root
+    prefix = tmp_path / "venv"
+    installed = prefix / "viral-shorts-skill"
+    installed.mkdir(parents=True)
+    (installed / "SKILL.md").write_text("# skill", encoding="utf-8")
+    monkeypatch.delenv("VIRAL_SHORTS_ROOT", raising=False)
+    monkeypatch.setattr(skill_root, "__file__", str(tmp_path / "site-packages" / "tools" / "skill_root.py"))
+    monkeypatch.setattr(sys, "prefix", str(prefix))
+    assert skill_root.skill_root() == str(installed)

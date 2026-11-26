@@ -25,3 +25,11 @@ viral-shorts-mcp = "tools.mcp_server:main"
 
 [tool.setuptools]
 packages = ["tools"]
+
+[tool.setuptools.data-files]
+"viral-shorts-skill" = ["README.md", "SKILL.md", "AGENTS.md", "ALL_IN_ONE.md"]
+"viral-shorts-skill/references" = ["references/*.md"]
+"viral-shorts-skill/data" = ["data/*.md", "data/*.json", "data/*.csv"]
+"viral-shorts-skill/schemas" = ["schemas/*.json"]
+"viral-shorts-skill/templates" = ["templates/*"]
+"viral-shorts-skill/examples" = ["examples/*"]

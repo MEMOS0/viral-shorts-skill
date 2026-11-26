@@ -1,9 +1,10 @@
 """JSON Schema validation for the machine-readable stage files.
 usage: python schema_validate.py discovery|storyboard|package file.json"""
 import json, os, sys
+from skill_root import skill_root
 from jsonschema import Draft202012Validator
 def root():
-    return os.path.abspath(os.environ.get("VIRAL_SHORTS_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return skill_root()
 
 def validate(kind, doc):
     if kind not in ("discovery", "storyboard", "package"): return [f"unknown schema kind {kind!r}"]

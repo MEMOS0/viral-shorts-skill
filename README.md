@@ -20,7 +20,7 @@ viral-shorts-mcp
 # or without installing: python tools/mcp_server.py
 ```
 
-The server is intentionally repo-bound because its Markdown references and measured data are part of the corpus. Use an editable install from the checkout, or set `VIRAL_SHORTS_ROOT` to the checkout when launching it from another environment. Client configuration shape:
+The Markdown references and measured data are part of the package corpus. A normal wheel install includes them; use an editable install for development, or set `VIRAL_SHORTS_ROOT` to a checkout when launching against a separate working copy. Client configuration shape:
 
 ```json
 {"mcpServers":{"viral-shorts":{"command":"viral-shorts-mcp","env":{"VIRAL_SHORTS_ROOT":"/absolute/path/to/viral-shorts-skill"}}}}
