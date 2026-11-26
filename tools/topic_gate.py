@@ -43,12 +43,22 @@ def geo100(v):
     if any(x <= 0 for x in v): return 0
     return round(20 * math.exp(S.mean(math.log(x) for x in v)))
 
-def gate_topic(t):
+def gate_topic(t, critic_view=None):
     ev = t.get("evidence", {}); sc = t.get("scores", {}); cf = t.get("confidence", {}); fails = []
     nd, best, sat = demand_evidence(ev)
     src = [s for s in ev.get("sources", []) if has_url(s)]
     arch = [a for a in ev.get("archive", []) if has_url(a) and a.get("licence")]
     eff = effective(sc, cf, TOPIC_KEYS)
+    corrected = (critic_view or {}).get("corrected_scores") or {}
+    applied_corrections = {}
+    for k in TOPIC_KEYS:
+        try:
+            if k in corrected and corrected[k] is not None:
+                v = max(0.0, min(5.0, float(corrected[k])))
+                if v < eff[k]: applied_corrections[k] = v
+                eff[k] = min(eff[k], v)
+        except (TypeError, ValueError):
+            fails.append(f"Topic Critic corrected_scores.{k} is not numeric")
     if nd < 2: eff["demand"] = min(eff["demand"], 2); fails.append(f"demand: {nd} evidence type(s) with URLs, need 2 of {DEMAND_TYPES}")
     if not src or not any(s.get("type") == "primary" for s in src) or len(src) < 2: fails.append("facts: need >= 2 sources incl. 1 primary (report, court record, paper)")
     if len(arch) < 2: eff["visual"] = min(eff["visual"], 2); fails.append(f"visual: {len(arch)} licensed archive item(s), need 2")
@@ -59,7 +69,7 @@ def gate_topic(t):
         if eff[k] < fl: fails.append(f"{k}: effective {eff[k]} < floor {fl}")
     for k in ("facts", "clarity"):
         if eff[k] < 3: fails.append(f"{k}: effective {eff[k]} < 3 (hard gate)")
-    return dict(score=geo100(eff.values()), eff=eff, fails=fails, demand_types=nd, best_outlier=best, saturated_shorts=sat)
+    return dict(score=geo100(eff.values()), eff=eff, fails=fails, demand_types=nd, best_outlier=best, saturated_shorts=sat, critic_corrected=applied_corrections)
 
 def gate_angle(a, saturated):
     sc = a.get("scores", {}); cf = a.get("confidence", {}); fails = []
@@ -75,11 +85,11 @@ def evaluate(disc, critic=None):
     topics = disc.get("topics", []); critic = critic or {}; rows = []; block = []
     if len(topics) < MIN_TOPICS: block.append(f"only {len(topics)} candidate topics, need >= {MIN_TOPICS}")
     for t in topics:
-        g = gate_topic(t); angles = t.get("angles", [])
+        cv = critic.get(t.get("id"), {})
+        g = gate_topic(t, cv); angles = t.get("angles", [])
         if len(angles) < MIN_ANGLES: g["fails"].append(f"only {len(angles)} angles, need >= {MIN_ANGLES}")
         ar = sorted(((a, gate_angle(a, g["saturated_shorts"])) for a in angles), key=lambda x: (not x[1]["fails"], x[1]["score"]), reverse=True)
         best = ar[0] if ar else (None, dict(score=0, fails=["no angle"], eff={}))
-        cv = critic.get(t.get("id"), {})
         crit = cv.get("verdict")
         if crit != "pass": g["fails"].append("Topic Critic: " + ("no independent review" if not crit else "rejected: " + "; ".join(cv.get("reasons", []))))
         ok = not g["fails"] and not best[1]["fails"] and g["score"] >= PASS_SCORE and best[1]["score"] >= PASS_SCORE

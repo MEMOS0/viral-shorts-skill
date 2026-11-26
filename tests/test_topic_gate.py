@@ -75,3 +75,10 @@ def test_low_demand_blocks_even_if_everything_else_is_perfect():
         assert not row["ok"] and any("demand" in f for f in row["topic"]["fails"])
     d = disc(); [t["scores"].update(demand=1) for t in d["topics"]]
     assert G.evaluate(d, CRIT)["status"] == "BLOCK"
+
+
+def test_critic_corrected_scores_cap_scout_optimism():
+    c = copy.deepcopy(CRIT); c["t0"] = dict(verdict="pass", corrected_scores={"demand": 1, "gap": 2})
+    row = [r for r in G.evaluate(disc(), c)["ranking"] if r["id"] == "t0"][0]
+    assert not row["ok"] and row["topic"]["eff"]["demand"] == 1
+    assert row["topic"]["critic_corrected"] == {"demand": 1.0, "gap": 2.0}
