@@ -26,7 +26,7 @@ The server is intentionally repo-bound because its Markdown references and measu
 {"mcpServers":{"viral-shorts":{"command":"viral-shorts-mcp","env":{"VIRAL_SHORTS_ROOT":"/absolute/path/to/viral-shorts-skill"}}}}
 ```
 
-Tools expose schema validation, topic-gate evaluation, live demand scanning, storyboard validation, package linting, hook scoring and deterministic local semantic retrieval. Markdown references are available as `skill://...` resources; path traversal outside the repository is rejected. The server never overrides hard gates.
+Tools expose schema validation, topic-gate evaluation, live demand scanning, storyboard validation, package linting, hook scoring, post-render critic-pack generation, calibration and deterministic local semantic retrieval. Markdown references are available as `skill://...` resources; path traversal outside the repository is rejected. The server never overrides hard gates.
 
 Usage with any LLM: give it `SKILL.md` plus the `references/` files (or the single-file `ALL_IN_ONE.md`) and ask for a batch, e.g. "Using this skill, plan 10 engineering-disaster Shorts for YouTube and Instagram."
 
